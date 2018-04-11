@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SmartHomeThermometer
 {
-    class Thermometer
+    class Thermometer : IDisposable
     {
         private static readonly double DEFAULT_TEMPERATURE = 0.0;
         private static readonly double DELTA_TEMPERATURE = 1.0;
@@ -75,7 +75,7 @@ namespace SmartHomeThermometer
 
         ~Thermometer()
         {
-            _WorkerThread.Abort();
+            Dispose();
         }
 
         private void Run()
@@ -102,5 +102,9 @@ namespace SmartHomeThermometer
             _Mutex.ReleaseMutex();
         }
 
+        public void Dispose()
+        {
+            _WorkerThread.Abort();
+        }
     }
 }
