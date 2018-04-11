@@ -37,6 +37,11 @@ namespace SmartHomeThermometer
 
         private void Configure()
         {
+            Closed += (sender, e) =>
+            {
+                _Thermometer.Dispose();
+            };
+
             UpdateIntervalSetButton.Click += (sender, e) =>
             {
                 try
