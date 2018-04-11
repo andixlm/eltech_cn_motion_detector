@@ -22,6 +22,8 @@ namespace SmartHomeThermometer
     {
         private Thermometer _Thermometer;
 
+        private int _UpdateInterval;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -33,6 +35,9 @@ namespace SmartHomeThermometer
         private void Init()
         {
             _Thermometer = new Thermometer();
+
+            _UpdateInterval = Thermometer.DEFAULT_UPDATE_INTERVAL;
+            UpdateIntervalTextBlock.Text = _UpdateInterval.ToString();
         }
 
         private void Configure()
