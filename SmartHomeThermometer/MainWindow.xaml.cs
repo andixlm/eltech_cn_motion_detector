@@ -20,9 +20,35 @@ namespace SmartHomeThermometer
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Thermometer _Thermometer;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            Init();
+            Configure();
+        }
+
+        private void Init()
+        {
+            _Thermometer = new Thermometer();
+        }
+
+        private void Configure()
+        {
+            UpdateIntervalSetButton.Click += (sender, e) =>
+            {
+                try
+                {
+                    _Thermometer.UpdateInterval = int.Parse(UpdateIntervalTextBlock.Text);
+                }
+                catch (FormatException exc)
+                {
+                    Console.WriteLine(exc);
+                }
+            };
+
         }
     }
 }
