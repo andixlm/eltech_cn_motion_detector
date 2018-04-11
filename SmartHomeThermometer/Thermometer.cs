@@ -11,10 +11,10 @@ namespace SmartHomeThermometer
 {
     class Thermometer : IDisposable
     {
-        private static readonly double DEFAULT_TEMPERATURE = 0.0;
-        private static readonly double DELTA_TEMPERATURE = 1.0;
+        public static readonly double DEFAULT_TEMPERATURE = 0.0;
+        public static readonly double DELTA_TEMPERATURE = 1.0;
 
-        private static readonly int DEFAULT_UPDATE_INTERVAL = 1000;
+        public static readonly int DEFAULT_UPDATE_INTERVAL = 1000;
 
         private static readonly Random sRandom = new Random();
 
