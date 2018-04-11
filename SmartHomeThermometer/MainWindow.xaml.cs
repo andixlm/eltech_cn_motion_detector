@@ -51,7 +51,8 @@ namespace SmartHomeThermometer
             {
                 try
                 {
-                    _Thermometer.UpdateInterval = int.Parse(UpdateIntervalTextBlock.Text);
+                    _UpdateInterval = int.Parse(UpdateIntervalTextBlock.Text);
+                    _Thermometer.UpdateInterval = _UpdateInterval;
                 }
                 catch (FormatException exc)
                 {
