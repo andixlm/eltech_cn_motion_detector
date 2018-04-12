@@ -20,7 +20,7 @@
                                 <Label Name="ThermometerConnectionValueLabel" Content="down" />
 
                                 <TextBox Name="AddressTextBox" Width="96" />
-                                <TextBox Name="PortTextBox" Width="32" />
+                                <TextBox Name="PortTextBox" Width="44" />
 
                                 <Button Name="ConnectButton" HorizontalAlignment="Right" Width="64" Content="Connect" />
                             </DockPanel>
