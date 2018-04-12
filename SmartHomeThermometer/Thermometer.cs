@@ -20,15 +20,6 @@ namespace SmartHomeThermometer
 
         public delegate void OnTemperatureUpdateFunc(double temperature);
 
-        private OnTemperatureUpdateFunc _OnTemperatureUpdated;
-        public OnTemperatureUpdateFunc OnTemperatureUpdate
-        {
-            set
-            {
-                _OnTemperatureUpdated = value;
-            }
-        }
-
         private Mutex _Mutex;
         private Thread _WorkerThread;
 
@@ -70,6 +61,15 @@ namespace SmartHomeThermometer
             get
             {
                 return _LastUpdateTime;
+            }
+        }
+
+        private OnTemperatureUpdateFunc _OnTemperatureUpdated;
+        public OnTemperatureUpdateFunc OnTemperatureUpdate
+        {
+            set
+            {
+                _OnTemperatureUpdated = value;
             }
         }
 
