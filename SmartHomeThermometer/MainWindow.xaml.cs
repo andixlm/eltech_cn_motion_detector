@@ -70,7 +70,7 @@ namespace SmartHomeThermometer
             /// Objects
             _Thermometer.OnTemperatureUpdate = (temperature) =>
             {
-                TemperatureValueLabel.Dispatcher.Invoke(delegate ()
+                Dispatcher.Invoke(delegate ()
                 {
                     TemperatureValueLabel.Content = temperature.ToString("F2");
                 });
