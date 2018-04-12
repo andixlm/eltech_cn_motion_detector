@@ -42,11 +42,13 @@ namespace SmartHomeThermometer
 
         private void Configure()
         {
+            /// App
             Closed += (sender, e) =>
             {
                 _Thermometer.Dispose();
             };
 
+            /// Controls
             UpdateIntervalSetButton.Click += (sender, e) =>
             {
                 try
@@ -65,6 +67,7 @@ namespace SmartHomeThermometer
                 _Thermometer.UpdateTemperature();
             };
 
+            /// Objects
             _Thermometer.OnTemperatureUpdate = (temperature) =>
             {
                 TemperatureValueLabel.Dispatcher.Invoke(delegate ()
