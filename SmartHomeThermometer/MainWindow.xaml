@@ -5,50 +5,58 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SmartHomeThermometer"
         mc:Ignorable="d"
-        Title="Thermometer" MinHeight="220" Height="220" MaxHeight="220" MinWidth="400" Width="400">
+        Title="Thermometer" MinHeight="325" Height="325" MaxHeight="325" MinWidth="400" Width="400">
 
-    <Grid VerticalAlignment="Center" HorizontalAlignment="Stretch">
-        <GroupBox Header="Devices:" Margin="8">
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch">
+        <Grid>
+            <StackPanel Orientation="Vertical">
+
+                <GroupBox Header="Thermometer" Margin="4">
+                    <StackPanel Margin="4" Orientation="Vertical">
+
+                        <DockPanel Margin="4">
+                            <Label Content="Connection:" />
+                            <Label Name="ThermometerConnectionValueLabel" Content="down" />
+
+                            <TextBox Name="AddressTextBox" Width="96" />
+                            <TextBox Name="PortTextBox" Width="44" />
+
+                            <Button Name="ConnectButton" HorizontalAlignment="Right" Width="64" Content="Connect" />
+                        </DockPanel>
+
+                        <Separator />
+
+                        <DockPanel Margin="4">
+                            <Label Content="Update interval:" />
+                            <TextBox Name="UpdateIntervalTextBlock" Width="48" />
+
+                            <Button Name="UpdateIntervalSetButton" HorizontalAlignment="Right" Width="64" Content="Set" />
+                        </DockPanel>
+
+                        <Separator />
+
+                        <DockPanel Margin="4">
+                            <Label Content="Temperature:" />
+                            <Label Name="TemperatureValueLabel" Content="null" />
+
+                            <Button Name="TemperatureUpdateButton" HorizontalAlignment="Right" Width="64" Content="Update" />
+                        </DockPanel>
+
+                    </StackPanel>
+                </GroupBox>
+
+            </StackPanel>
+        </Grid>
+
+        <GroupBox Header="Log" Margin="4">
             <Grid>
                 <StackPanel Margin="4" Orientation="Vertical">
 
-                   <GroupBox Header="Thermometer" Margin="8">
-                        <StackPanel Margin="4" Orientation="Vertical">
-
-                            <DockPanel Margin="4">
-                                <Label Content="Connection:" />
-                                <Label Name="ThermometerConnectionValueLabel" Content="down" />
-
-                                <TextBox Name="AddressTextBox" Width="96" />
-                                <TextBox Name="PortTextBox" Width="44" />
-
-                                <Button Name="ConnectButton" HorizontalAlignment="Right" Width="64" Content="Connect" />
-                            </DockPanel>
-
-                            <Separator />
-
-                            <DockPanel Margin="4">
-                                <Label Content="Update interval:" />
-                                <TextBox Name="UpdateIntervalTextBlock" Width="48" />
-
-                                <Button Name="UpdateIntervalSetButton" HorizontalAlignment="Right" Width="64" Content="Set" />
-                            </DockPanel>
-
-                            <Separator />
-
-                            <DockPanel Margin="4">
-                                <Label Content="Temperature:" />
-                                <Label Name="TemperatureValueLabel" Content="null" />
-
-                                <Button Name="TemperatureUpdateButton" HorizontalAlignment="Right" Width="64" Content="Update" />
-                            </DockPanel>
-
-                        </StackPanel>
-                    </GroupBox>
+                    <TextBox Name="LogTextBlock" Height="96" VerticalScrollBarVisibility="Auto"/>
 
                 </StackPanel>
             </Grid>
         </GroupBox>
-    </Grid>
+    </StackPanel>
 
 </Window>
