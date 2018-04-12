@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SmartHomeThermometer"
         mc:Ignorable="d"
-        Title="Thermometer" MinHeight="220" Height="220" MaxHeight="220" MinWidth="350" Width="350">
+        Title="Thermometer" MinHeight="220" Height="220" MaxHeight="220" MinWidth="400" Width="400">
 
     <Grid VerticalAlignment="Center" HorizontalAlignment="Stretch">
         <GroupBox Header="Devices:" Margin="8">
@@ -17,9 +17,9 @@
 
                             <DockPanel Margin="4">
                                 <Label Content="Connection:" />
-                                <Label Name="ThermometerConnectionValueLabel" Content="-" />
+                                <Label Name="ThermometerConnectionValueLabel" Content="down" />
 
-                                <TextBox Name="AddressTextBox" Width="64" />
+                                <TextBox Name="AddressTextBox" Width="96" />
                                 <TextBox Name="PortTextBox" Width="32" />
 
                                 <Button Name="ConnectButton" HorizontalAlignment="Right" Width="64" Content="Connect" />
@@ -29,7 +29,7 @@
 
                             <DockPanel Margin="4">
                                 <Label Content="Update interval:" />
-                                <TextBox Name="UpdateIntervalTextBlock" Width="32" />
+                                <TextBox Name="UpdateIntervalTextBlock" Width="48" />
 
                                 <Button Name="UpdateIntervalSetButton" HorizontalAlignment="Right" Width="64" Content="Set" />
                             </DockPanel>
