@@ -94,7 +94,6 @@ namespace SmartHomeThermometer
             while (true)
             {
                 UpdateTemperature();
-                _OnTemperatureUpdated?.Invoke(_Temperature);
 
                 _Mutex.WaitOne();
                 int interval = _UpdateInterval;
@@ -104,7 +103,7 @@ namespace SmartHomeThermometer
             }
         }
 
-        private void UpdateTemperature()
+        public void UpdateTemperature()
         {
             _Mutex.WaitOne();
 
@@ -112,6 +111,8 @@ namespace SmartHomeThermometer
             _LastUpdateTime = DateTime.Now;
 
             _Mutex.ReleaseMutex();
+
+            _OnTemperatureUpdated?.Invoke(_Temperature);
         }
 
         public void Dispose()
