@@ -60,6 +60,11 @@ namespace SmartHomeThermometer
                 }
             };
 
+            TemperatureUpdateButton.Click += (sender, e) =>
+            {
+                _Thermometer.UpdateTemperature();
+            };
+
             _Thermometer.OnTemperatureUpdate = (temperature) =>
             {
                 TemperatureValueLabel.Dispatcher.Invoke(delegate ()
