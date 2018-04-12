@@ -18,6 +18,17 @@ namespace SmartHomeThermometer
 
         private static readonly Random sRandom = new Random();
 
+        public delegate void OnTemperatureUpdateFunc(double temperature);
+
+        private OnTemperatureUpdateFunc _OnTemperatureUpdated;
+        public OnTemperatureUpdateFunc OnTemperatureUpdate
+        {
+            set
+            {
+                _OnTemperatureUpdated = value;
+            }
+        }
+
         private Mutex _Mutex;
         private Thread _WorkerThread;
 
@@ -83,6 +94,7 @@ namespace SmartHomeThermometer
             while (true)
             {
                 UpdateTemperature();
+                _OnTemperatureUpdated?.Invoke(_Temperature);
 
                 _Mutex.WaitOne();
                 int interval = _UpdateInterval;
