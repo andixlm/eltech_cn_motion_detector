@@ -14,7 +14,7 @@ namespace SmartHomeThermometer
         public static readonly double DEFAULT_TEMPERATURE = 0.0;
         public static readonly double DELTA_TEMPERATURE = 1.0;
 
-        public static readonly int DEFAULT_UPDATE_INTERVAL = 1000;
+        public static readonly int DEFAULT_UPDATE_INTERVAL = 1;
 
         private static readonly Random sRandom = new Random();
 
@@ -46,11 +46,11 @@ namespace SmartHomeThermometer
 
             set
             {
-                if (value < 1)
-                    throw new ArgumentOutOfRangeException("UpdateInterval can not be negative");
+                if (value < 1 || value > 10)
+                    throw new ArgumentOutOfRangeException("Incorrect UpdateInterval");
 
                 _Mutex.WaitOne();
-                _UpdateInterval = value;
+                _UpdateInterval = 1000 * value;
                 _Mutex.ReleaseMutex();
             }
         }
@@ -76,7 +76,7 @@ namespace SmartHomeThermometer
         public Thermometer()
         {
             _Temperature = DEFAULT_TEMPERATURE;
-            _UpdateInterval = DEFAULT_UPDATE_INTERVAL;
+            _UpdateInterval = 1000 * DEFAULT_UPDATE_INTERVAL;
             _LastUpdateTime = DateTime.Now;
 
             _Mutex = new Mutex();
