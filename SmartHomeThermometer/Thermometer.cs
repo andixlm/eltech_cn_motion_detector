@@ -47,7 +47,7 @@ namespace SmartHomeThermometer
             set
             {
                 if (value < 1 || value > 10)
-                    throw new ArgumentOutOfRangeException("Incorrect UpdateInterval");
+                    throw new Exception("Incorrect UpdateInterval value");
 
                 _Mutex.WaitOne();
                 _UpdateInterval = 1000 * value;
