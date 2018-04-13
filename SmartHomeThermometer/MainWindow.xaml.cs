@@ -18,13 +18,13 @@ using System.Windows.Shapes;
 
 namespace SmartHomeThermometer
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private static readonly string IPADDRESS_LOG_LABEL = "IP Address: ";
+
         private static readonly string PORT_LOG_LABEL = "Port: ";
+        private static readonly int MINIMAL_PORT_VALUE = 1024;
+        private static readonly int MAXIMAL_PORT_VALUE = 49151;
 
         private static readonly string CONNECTION_LOG_LABEL = "Connection: ";
         private static readonly string CONNECTION_UP = "up";
@@ -129,9 +129,10 @@ namespace SmartHomeThermometer
             {
                 _Port = int.Parse(PortTextBox.Text);
 
-                if (_Port < 1024 || _Port > 49151)
+                if (_Port < MINIMAL_PORT_VALUE || _Port > MAXIMAL_PORT_VALUE)
                 {
-                    throw new Exception("Incorrect port value: [1024; 49151] ports are allowed");
+                    throw new Exception(string.Format("Incorrect port value. [{0}; {1}] ports are allowed.",
+                        MINIMAL_PORT_VALUE, MAXIMAL_PORT_VALUE);
                 }
             }
             catch (Exception exc)
