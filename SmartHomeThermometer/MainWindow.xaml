@@ -52,7 +52,7 @@
             <Grid>
                 <StackPanel Margin="4" Orientation="Vertical">
 
-                    <TextBox Name="LogTextBlock" Height="96" VerticalScrollBarVisibility="Auto"/>
+                    <TextBox Name="LogTextBlock" Height="96" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
 
                 </StackPanel>
             </Grid>
