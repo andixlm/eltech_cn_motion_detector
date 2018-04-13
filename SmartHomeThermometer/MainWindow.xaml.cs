@@ -20,6 +20,8 @@ namespace SmartHomeThermometer
     /// </summary>
     public partial class MainWindow : Window
     {
+        private static readonly string UPDATE_INTERVAL_LOG_LABEL = "Update interval: ";
+
         private Thermometer _Thermometer;
 
         private int _UpdateInterval;
@@ -55,10 +57,13 @@ namespace SmartHomeThermometer
                 {
                     _UpdateInterval = int.Parse(UpdateIntervalTextBlock.Text);
                     _Thermometer.UpdateInterval = _UpdateInterval;
+
+                    LogTextBlock.AppendText(UPDATE_INTERVAL_LOG_LABEL +
+                        string.Format("Set to {0}\n", _UpdateInterval));
                 }
-                catch (FormatException exc)
+                catch (Exception exc)
                 {
-                    Console.WriteLine(exc);
+                    LogTextBlock.AppendText(UPDATE_INTERVAL_LOG_LABEL + exc.Message + "\n");
                 }
             };
 
