@@ -16,7 +16,7 @@
 
                         <DockPanel Margin="4">
                             <Label Content="Connection:" />
-                            <Label Name="ThermometerConnectionValueLabel" Content="down" />
+                            <Label Name="ConnectionStateLabel" Content="down" />
 
                             <TextBox Name="AddressTextBox" Width="96" />
                             <TextBox Name="PortTextBox" Width="44" />

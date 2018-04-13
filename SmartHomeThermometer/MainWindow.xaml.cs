@@ -147,7 +147,7 @@ namespace SmartHomeThermometer
                 {
                     LogTextBlock.AppendText(CONNECTION_LOG_LABEL +
                     string.Format("Connecting to {0}:{1}\n", _IPAddress.ToString(), _Port));
-                    ThermometerConnectionValueLabel.Content = CONNECTION_WAIT;
+                    ConnectionStateLabel.Content = CONNECTION_WAIT;
 
                     try
                     {
@@ -156,18 +156,18 @@ namespace SmartHomeThermometer
 
                         LogTextBlock.AppendText(CONNECTION_LOG_LABEL +
                             string.Format("Connected to {0}:{1}\n", _IPAddress.ToString(), _Port));
-                        ThermometerConnectionValueLabel.Content = CONNECTION_UP;
+                        ConnectionStateLabel.Content = CONNECTION_UP;
                     }
                     catch (SocketException exc)
                     {
                         LogTextBlock.AppendText(CONNECTION_LOG_LABEL + exc.Message + "\n");
-                        ThermometerConnectionValueLabel.Content = CONNECTION_ERR;
+                        ConnectionStateLabel.Content = CONNECTION_ERR;
                         ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
                     }
                     catch (ObjectDisposedException exc)
                     {
                         LogTextBlock.AppendText(CONNECTION_LOG_LABEL + exc.Message + "\n");
-                        ThermometerConnectionValueLabel.Content = CONNECTION_DOWN;
+                        ConnectionStateLabel.Content = CONNECTION_DOWN;
                         ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
                     }
                 });
