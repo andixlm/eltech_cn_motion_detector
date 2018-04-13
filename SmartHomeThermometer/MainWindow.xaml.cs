@@ -146,31 +146,40 @@ namespace SmartHomeThermometer
                 Dispatcher.Invoke(delegate ()
                 {
                     LogTextBlock.AppendText(CONNECTION_LOG_LABEL +
-                    string.Format("Connecting to {0}:{1}\n", _IPAddress.ToString(), _Port));
+                        string.Format("Connecting to {0}:{1}\n", _IPAddress.ToString(), _Port));
                     ConnectionStateLabel.Content = CONNECTION_WAIT;
+                });
 
-                    try
+                try
+                {
+                    _Socket.Connect(_IPAddress, _Port);
+                    /// TODO: Get stream and send device info.
+
+                    Dispatcher.Invoke(delegate ()
                     {
-                        _Socket.Connect(_IPAddress, _Port);
-                        /// TODO: Get stream and send device info.
-
                         LogTextBlock.AppendText(CONNECTION_LOG_LABEL +
                             string.Format("Connected to {0}:{1}\n", _IPAddress.ToString(), _Port));
                         ConnectionStateLabel.Content = CONNECTION_UP;
-                    }
-                    catch (SocketException exc)
+                    });
+                }
+                catch (SocketException exc)
+                {
+                    Dispatcher.Invoke(delegate ()
                     {
                         LogTextBlock.AppendText(CONNECTION_LOG_LABEL + exc.Message + "\n");
                         ConnectionStateLabel.Content = CONNECTION_ERR;
                         ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
-                    }
-                    catch (ObjectDisposedException exc)
+                    });
+                }
+                catch (ObjectDisposedException exc)
+                {
+                    Dispatcher.Invoke(delegate ()
                     {
                         LogTextBlock.AppendText(CONNECTION_LOG_LABEL + exc.Message + "\n");
                         ConnectionStateLabel.Content = CONNECTION_DOWN;
                         ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
-                    }
-                });
+                    });
+                }
             }));
             connectThread.Start();
         }
