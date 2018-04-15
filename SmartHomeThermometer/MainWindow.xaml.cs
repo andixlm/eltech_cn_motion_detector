@@ -85,7 +85,12 @@ namespace SmartHomeThermometer
                     string data = Encoding.Unicode.GetString(bytes);
                     data = data.Substring(0, data.IndexOf("$"));
 
-                    /// TODO: Process data.
+                    if (string.IsNullOrEmpty(data))
+                    {
+                        continue;
+                    }
+
+                    ProcessData(data);
                 }
             }));
 
@@ -227,6 +232,15 @@ namespace SmartHomeThermometer
             byte[] bytes = Encoding.Unicode.GetBytes(string.Format("Temparatute: {0}", temperature));
 
             Send(bytes);
+        }
+
+        private void ProcessData(string data)
+        {
+            int idx;
+            if ((idx = data.IndexOf("Update interval: ")) > 0)
+            {
+                /// TODO: Parse and set update interval.
+            }
         }
     }
 }
