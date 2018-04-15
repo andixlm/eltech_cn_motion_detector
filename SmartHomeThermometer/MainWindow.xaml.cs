@@ -41,7 +41,6 @@ namespace SmartHomeThermometer
         private int _UpdateInterval;
 
         private TcpClient _Socket;
-        private NetworkStream _SocketStream;
 
         private Thread _ListenerThread;
 
@@ -64,7 +63,6 @@ namespace SmartHomeThermometer
             UpdateIntervalTextBlock.Text = _UpdateInterval.ToString();
 
             _Socket = new TcpClient();
-            _SocketStream = default(NetworkStream);
         }
 
         private void Configure()
@@ -212,9 +210,9 @@ namespace SmartHomeThermometer
 
         private void Send(byte[] data)
         {
-            _SocketStream = _Socket.GetStream();
-            _SocketStream.Write(data, 0, data.Length);
-            _SocketStream.Flush();
+            NetworkStream stream = _Socket.GetStream();
+            stream.Write(data, 0, data.Length);
+            stream.Flush();
         }
 
         private void SendInfo()
