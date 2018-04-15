@@ -198,5 +198,12 @@ namespace SmartHomeThermometer
 
             Send(data);
         }
+
+        private void SendTemperature()
+        {
+            byte[] data = Encoding.Unicode.GetBytes(string.Format("Temparatute: {0}", _Thermometer.Temperature));
+
+            Send(data);
+        }
     }
 }
