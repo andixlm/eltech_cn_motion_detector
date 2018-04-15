@@ -154,7 +154,7 @@ namespace SmartHomeThermometer
                 try
                 {
                     _Socket.Connect(_IPAddress, _Port);
-                    /// TODO: Get stream and send device info.
+                    SendInfo();
 
                     Dispatcher.Invoke(delegate ()
                     {
@@ -183,6 +183,15 @@ namespace SmartHomeThermometer
                 }
             }));
             connectThread.Start();
+        }
+
+        private void SendInfo()
+        {
+            byte[] data = Encoding.Unicode.GetBytes("Device: Thermometer");
+
+            _SocketStream = _Socket.GetStream();
+            _SocketStream.Write(data, 0, data.Length);
+            _SocketStream.Flush();
         }
     }
 }
