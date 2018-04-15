@@ -208,25 +208,25 @@ namespace SmartHomeThermometer
             connectThread.Start();
         }
 
-        private void Send(byte[] data)
+        private void Send(byte[] bytes)
         {
             NetworkStream stream = _Socket.GetStream();
-            stream.Write(data, 0, data.Length);
+            stream.Write(bytes, 0, bytes.Length);
             stream.Flush();
         }
 
         private void SendInfo()
         {
-            byte[] data = Encoding.Unicode.GetBytes("Device: Thermometer");
+            byte[] bytes = Encoding.Unicode.GetBytes("Device: Thermometer");
 
-            Send(data);
+            Send(bytes);
         }
 
         private void SendTemperature(double temperature)
         {
-            byte[] data = Encoding.Unicode.GetBytes(string.Format("Temparatute: {0}", temperature));
+            byte[] bytes = Encoding.Unicode.GetBytes(string.Format("Temparatute: {0}", temperature));
 
-            Send(data);
+            Send(bytes);
         }
     }
 }
