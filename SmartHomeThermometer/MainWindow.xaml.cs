@@ -36,6 +36,8 @@ namespace SmartHomeThermometer
 
         private static readonly string UPDATE_INTERVAL_LOG_LABEL = "Update interval: ";
 
+        private static readonly string NETWORK_LOG_LABEL = "Network: ";
+
         private Thermometer _Thermometer;
 
         private int _UpdateInterval;
@@ -239,7 +241,16 @@ namespace SmartHomeThermometer
             int idx;
             if ((idx = data.IndexOf("Update interval: ")) > 0)
             {
-                /// TODO: Parse and set update interval.
+                try
+                {
+                    int updateInterval = int.Parse(data.Substring(idx, data.IndexOf("$")));
+                    _Thermometer.UpdateInterval = updateInterval;
+                }
+                catch (FormatException)
+                {
+                    LogTextBlock.AppendText(NETWORK_LOG_LABEL + "Received incorrect update interval.");
+                    LogTextBlock.ScrollToEnd();
+                }
             }
         }
     }
