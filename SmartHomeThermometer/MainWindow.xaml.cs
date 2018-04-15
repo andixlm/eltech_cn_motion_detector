@@ -20,6 +20,8 @@ namespace SmartHomeThermometer
 {
     public partial class MainWindow : Window
     {
+        private static readonly int BUFFER_SIZE = 1024;
+
         private static readonly string IPADDRESS_LOG_LABEL = "IP Address: ";
 
         private static readonly string PORT_LOG_LABEL = "Port: ";
@@ -40,6 +42,8 @@ namespace SmartHomeThermometer
 
         private TcpClient _Socket;
         private NetworkStream _SocketStream;
+
+        private Thread _ListenerThread;
 
         private IPAddress _IPAddress;
         private int _Port;
@@ -70,6 +74,22 @@ namespace SmartHomeThermometer
             {
                 _Thermometer.Dispose();
             };
+
+            _ListenerThread = new Thread(new ThreadStart(delegate ()
+            {
+                while (_Socket.Connected)
+                {
+                    byte[] bytes = new byte[BUFFER_SIZE];
+
+                    NetworkStream socketStream = _Socket.GetStream();
+                    socketStream.Read(bytes, 0, _Socket.ReceiveBufferSize);
+
+                    string data = Encoding.Unicode.GetString(bytes);
+                    data = data.Substring(0, data.IndexOf("$"));
+
+                    /// TODO: Process data.
+                }
+            }));
 
             /// Controls
             ConnectButton.Click += (sender, e) =>
@@ -158,6 +178,8 @@ namespace SmartHomeThermometer
                 {
                     _Socket.Connect(_IPAddress, _Port);
                     SendInfo();
+
+                    _ListenerThread.Start();
 
                     Dispatcher.Invoke(delegate ()
                     {
