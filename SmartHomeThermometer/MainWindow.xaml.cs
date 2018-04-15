@@ -38,6 +38,8 @@ namespace SmartHomeThermometer
 
         private static readonly string NETWORK_LOG_LABEL = "Network: ";
 
+        private static readonly string NETWORK_DEVICE_ARG = "Device: ";
+        private static readonly string NETWORK_TEMPERATURE_ARG = "Temparatute: ";
         private static readonly string NETWORK_UPDATE_INTERVAL_ARG = "Update interval: ";
 
         private Thermometer _Thermometer;
@@ -234,14 +236,14 @@ namespace SmartHomeThermometer
 
         private void SendInfo()
         {
-            byte[] bytes = Encoding.Unicode.GetBytes("Device: Thermometer");
+            byte[] bytes = Encoding.Unicode.GetBytes(NETWORK_DEVICE_ARG + "Thermometer");
 
             Send(bytes);
         }
 
         private void SendTemperature(double temperature)
         {
-            byte[] bytes = Encoding.Unicode.GetBytes(string.Format("Temparatute: {0}", temperature));
+            byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_TEMPERATURE_ARG + "{0}", temperature));
 
             Send(bytes);
         }
