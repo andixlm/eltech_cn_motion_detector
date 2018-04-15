@@ -38,6 +38,8 @@ namespace SmartHomeThermometer
 
         private static readonly string NETWORK_LOG_LABEL = "Network: ";
 
+        private static readonly string NETWORK_UPDATE_INTERVAL_ARG = "Update interval: ";
+
         private Thermometer _Thermometer;
 
         private int _UpdateInterval;
@@ -247,7 +249,7 @@ namespace SmartHomeThermometer
         private void ProcessData(string data)
         {
             int idx;
-            if ((idx = data.IndexOf("Update interval: ")) > 0)
+            if ((idx = data.IndexOf(NETWORK_UPDATE_INTERVAL_ARG)) > 0)
             {
                 try
                 {
