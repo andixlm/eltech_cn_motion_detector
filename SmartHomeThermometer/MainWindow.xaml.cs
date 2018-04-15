@@ -262,6 +262,11 @@ namespace SmartHomeThermometer
                     LogTextBlock.ScrollToEnd();
                 }
             }
+            else
+            {
+                LogTextBlock.AppendText(string.Format(NETWORK_LOG_LABEL + "Received unknown data: \"{0}\"\n", data));
+                LogTextBlock.ScrollToEnd();
+            }
         }
     }
 }
