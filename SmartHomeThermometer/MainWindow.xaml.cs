@@ -111,10 +111,12 @@ namespace SmartHomeThermometer
 
                     LogTextBlock.AppendText(UPDATE_INTERVAL_LOG_LABEL +
                         string.Format("Set to {0}\n", _UpdateInterval));
+                    LogTextBlock.ScrollToEnd();
                 }
                 catch (Exception exc)
                 {
                     LogTextBlock.AppendText(UPDATE_INTERVAL_LOG_LABEL + exc.Message + "\n");
+                    LogTextBlock.ScrollToEnd();
                 }
             };
 
@@ -149,6 +151,7 @@ namespace SmartHomeThermometer
             catch (Exception exc)
             {
                 LogTextBlock.AppendText(IPADDRESS_LOG_LABEL + exc.Message);
+                LogTextBlock.ScrollToEnd();
                 ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
                 return;
             }
@@ -166,6 +169,7 @@ namespace SmartHomeThermometer
             catch (Exception exc)
             {
                 LogTextBlock.AppendText(PORT_LOG_LABEL + exc.Message);
+                LogTextBlock.ScrollToEnd();
                 ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
                 return;
             }
@@ -176,6 +180,7 @@ namespace SmartHomeThermometer
                 {
                     LogTextBlock.AppendText(CONNECTION_LOG_LABEL +
                         string.Format("Connecting to {0}:{1}\n", _IPAddress.ToString(), _Port));
+                    LogTextBlock.ScrollToEnd();
                     ConnectionStateLabel.Content = CONNECTION_WAIT;
                 });
 
@@ -190,6 +195,7 @@ namespace SmartHomeThermometer
                     {
                         LogTextBlock.AppendText(CONNECTION_LOG_LABEL +
                             string.Format("Connected to {0}:{1}\n", _IPAddress.ToString(), _Port));
+                        LogTextBlock.ScrollToEnd();
                         ConnectionStateLabel.Content = CONNECTION_UP;
                     });
                 }
@@ -198,6 +204,7 @@ namespace SmartHomeThermometer
                     Dispatcher.Invoke(delegate ()
                     {
                         LogTextBlock.AppendText(CONNECTION_LOG_LABEL + exc.Message + "\n");
+                        LogTextBlock.ScrollToEnd();
                         ConnectionStateLabel.Content = CONNECTION_ERR;
                         ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
                     });
@@ -207,6 +214,7 @@ namespace SmartHomeThermometer
                     Dispatcher.Invoke(delegate ()
                     {
                         LogTextBlock.AppendText(CONNECTION_LOG_LABEL + exc.Message + "\n");
+                        LogTextBlock.ScrollToEnd();
                         ConnectionStateLabel.Content = CONNECTION_DOWN;
                         ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
                     });
