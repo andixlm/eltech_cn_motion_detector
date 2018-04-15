@@ -185,13 +185,18 @@ namespace SmartHomeThermometer
             connectThread.Start();
         }
 
+        private void Send(byte[] data)
+        {
+            _SocketStream = _Socket.GetStream();
+            _SocketStream.Write(data, 0, data.Length);
+            _SocketStream.Flush();
+        }
+
         private void SendInfo()
         {
             byte[] data = Encoding.Unicode.GetBytes("Device: Thermometer");
 
-            _SocketStream = _Socket.GetStream();
-            _SocketStream.Write(data, 0, data.Length);
-            _SocketStream.Flush();
+            Send(data);
         }
     }
 }
