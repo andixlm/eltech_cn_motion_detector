@@ -106,7 +106,10 @@ namespace SmartHomeThermometer
                     TemperatureValueLabel.Content = temperature.ToString("F2");
                 });
 
-                /// TODO: Send via socket to server.
+                if (_Socket.Connected)
+                {
+                    SendTemperature(temperature);
+                }
             };
         }
 
@@ -199,9 +202,9 @@ namespace SmartHomeThermometer
             Send(data);
         }
 
-        private void SendTemperature()
+        private void SendTemperature(double temperature)
         {
-            byte[] data = Encoding.Unicode.GetBytes(string.Format("Temparatute: {0}", _Thermometer.Temperature));
+            byte[] data = Encoding.Unicode.GetBytes(string.Format("Temparatute: {0}", temperature));
 
             Send(data);
         }
