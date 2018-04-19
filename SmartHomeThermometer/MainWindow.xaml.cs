@@ -20,7 +20,7 @@ namespace SmartHomeThermometer
 {
     public partial class MainWindow : Window
     {
-        private static readonly int BUFFER_SIZE = 1024;
+        private static readonly int BUFFER_SIZE = 8192;
 
         private static readonly string IPADDRESS_LOG_LABEL = "IP Address: ";
 
