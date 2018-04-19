@@ -39,7 +39,7 @@ namespace SmartHomeThermometer
         private static readonly string NETWORK_LOG_LABEL = "Network: ";
 
         private static readonly string NETWORK_DEVICE_ARG = "Device: ";
-        private static readonly string NETWORK_TEMPERATURE_ARG = "Temparatute: ";
+        private static readonly string NETWORK_TEMPERATURE_ARG = "Temperatute: ";
         private static readonly string NETWORK_UPDATE_INTERVAL_ARG = "Update interval: ";
 
         private Thermometer _Thermometer;
