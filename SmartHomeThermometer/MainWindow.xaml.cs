@@ -242,6 +242,13 @@ namespace SmartHomeThermometer
             Send(bytes);
         }
 
+        private void SendUpdateInterval(double updateInterval)
+        {
+            byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_UPDATE_INTERVAL_ARG + "{0}" + ";", updateInterval));
+
+            Send(bytes);
+        }
+
         private void SendTemperature(double temperature)
         {
             byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_TEMPERATURE_ARG + "{0}" + ";", temperature));
