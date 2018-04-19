@@ -193,6 +193,7 @@ namespace SmartHomeThermometer
                 {
                     _Socket.Connect(_IPAddress, _Port);
                     SendInfo();
+                    SendUpdateInterval(_UpdateInterval);
 
                     _ListenerThread.Start();
 
