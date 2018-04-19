@@ -256,7 +256,8 @@ namespace SmartHomeThermometer
             {
                 try
                 {
-                    int updateInterval = int.Parse(data.Substring(idx, data.IndexOf("$")));
+                    int startIdx = idx + NETWORK_UPDATE_INTERVAL_ARG.Length, endIdx = data.IndexOf(";");
+                    int updateInterval = int.Parse(data.Substring(startIdx, endIdx - startIdx));
                     _Thermometer.UpdateInterval = updateInterval;
                 }
                 catch (FormatException)
