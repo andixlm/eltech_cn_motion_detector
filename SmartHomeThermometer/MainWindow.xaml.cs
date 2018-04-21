@@ -141,6 +141,13 @@ namespace SmartHomeThermometer
                 if (_Socket.Connected)
                 {
                     SendTemperature(temperature);
+
+                    Dispatcher.Invoke(delegate ()
+                    {
+                        LogTextBlock.AppendText(NETWORK_LOG_LABEL +
+                            string.Format("Sent temperature: {0}", temperature) + "\n");
+                        LogTextBlock.ScrollToEnd();
+                    });
                 }
             };
         }
