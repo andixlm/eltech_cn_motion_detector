@@ -54,6 +54,8 @@ namespace SmartHomeThermometer
 
         private Mutex _SocketMutex;
 
+        private List<string> _Cache;
+
         private IPAddress _IPAddress;
         private int _Port;
 
@@ -75,6 +77,8 @@ namespace SmartHomeThermometer
             _Socket = new TcpClient();
 
             _SocketMutex = new Mutex();
+
+            _Cache = new List<string>();
         }
 
         private void Configure()
@@ -94,16 +98,8 @@ namespace SmartHomeThermometer
                     NetworkStream socketStream = _Socket.GetStream();
                     socketStream.Read(bytes, 0, _Socket.ReceiveBufferSize);
 
-                    /// TODO: Parse, cache received data and process then.
-                    string data = Encoding.Unicode.GetString(bytes);
-                    data = data.Substring(0, data.IndexOf(DELIMITER));
-
-                    if (string.IsNullOrEmpty(data))
-                    {
-                        continue;
-                    }
-
-                    ProcessData(data);
+                    ProcessData(CacheData(Encoding.Unicode.GetString(bytes), ref _Cache));
+                    ProcessData(ref _Cache);
                 }
             }));
 
@@ -326,6 +322,16 @@ namespace SmartHomeThermometer
                 LogTextBlock.AppendText(string.Format(NETWORK_LOG_LABEL + "Received unknown data: \"{0}\"" + "\n", data));
                 LogTextBlock.ScrollToEnd();
             }
+        }
+
+        private void ProcessData(ref List<string> dataSet)
+        {
+            foreach (string data in dataSet)
+            {
+                ProcessData(data);
+            }
+
+            dataSet.Clear();
         }
     }
 }
