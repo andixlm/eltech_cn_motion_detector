@@ -198,10 +198,6 @@ namespace SmartHomeThermometer
                 try
                 {
                     _Socket.Connect(_IPAddress, _Port);
-                    SendInfo();
-                    SendUpdateInterval(_UpdateInterval);
-
-                    _ListenerThread.Start();
 
                     Dispatcher.Invoke(delegate ()
                     {
@@ -210,6 +206,11 @@ namespace SmartHomeThermometer
                         LogTextBlock.ScrollToEnd();
                         ConnectionStateLabel.Content = CONNECTION_UP;
                     });
+
+                    SendInfo();
+                    SendUpdateInterval(_UpdateInterval);
+
+                    _ListenerThread.Start();
                 }
                 catch (SocketException exc)
                 {
