@@ -50,6 +50,8 @@ namespace SmartHomeThermometer
 
         private Thread _ListenerThread;
 
+        private Mutex _SocketMutex;
+
         private IPAddress _IPAddress;
         private int _Port;
 
@@ -69,6 +71,8 @@ namespace SmartHomeThermometer
             UpdateIntervalTextBlock.Text = _UpdateInterval.ToString();
 
             _Socket = new TcpClient();
+
+            _SocketMutex = new Mutex();
         }
 
         private void Configure()
@@ -231,9 +235,13 @@ namespace SmartHomeThermometer
 
         private void Send(byte[] bytes)
         {
+            _SocketMutex.WaitOne();
+
             NetworkStream stream = _Socket.GetStream();
             stream.Write(bytes, 0, bytes.Length);
             stream.Flush();
+
+            _SocketMutex.ReleaseMutex();
         }
 
         private void SendInfo()
