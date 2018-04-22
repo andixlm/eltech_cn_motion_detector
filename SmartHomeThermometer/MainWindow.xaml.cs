@@ -141,13 +141,6 @@ namespace SmartHomeThermometer
                 if (_Socket.Connected)
                 {
                     SendTemperature(temperature);
-
-                    Dispatcher.Invoke(delegate ()
-                    {
-                        LogTextBlock.AppendText(NETWORK_LOG_LABEL +
-                            string.Format("Sent temperature: {0}", temperature) + "\n");
-                        LogTextBlock.ScrollToEnd();
-                    });
                 }
             };
         }
@@ -248,6 +241,12 @@ namespace SmartHomeThermometer
             byte[] bytes = Encoding.Unicode.GetBytes(NETWORK_DEVICE_ARG + "Thermometer" + ";");
 
             Send(bytes);
+
+            Dispatcher.Invoke(delegate ()
+            {
+                LogTextBlock.AppendText(NETWORK_LOG_LABEL + "Sent info" + "\n");
+                LogTextBlock.ScrollToEnd();
+            });
         }
 
         private void SendUpdateInterval(double updateInterval)
@@ -255,6 +254,12 @@ namespace SmartHomeThermometer
             byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_UPDATE_INTERVAL_ARG + "{0}" + ";", updateInterval));
 
             Send(bytes);
+
+            Dispatcher.Invoke(delegate ()
+            {
+                LogTextBlock.AppendText(NETWORK_LOG_LABEL + "Sent update interval" + "\n");
+                LogTextBlock.ScrollToEnd();
+            });
         }
 
         private void SendTemperature(double temperature)
@@ -262,6 +267,13 @@ namespace SmartHomeThermometer
             byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_TEMPERATURE_ARG + "{0}" + ";", temperature));
 
             Send(bytes);
+
+            Dispatcher.Invoke(delegate ()
+            {
+                LogTextBlock.AppendText(NETWORK_LOG_LABEL +
+                    string.Format("Sent temperature: {0}", temperature.ToString("F2")) + "\n");
+                LogTextBlock.ScrollToEnd();
+            });
         }
 
         private void ProcessData(string data)
