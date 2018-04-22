@@ -22,6 +22,8 @@ namespace SmartHomeThermometer
     {
         private static readonly int BUFFER_SIZE = 8192;
 
+        private static readonly char DELIMITER = ';';
+
         private static readonly string IPADDRESS_LOG_LABEL = "IP Address: ";
 
         private static readonly string PORT_LOG_LABEL = "Port: ";
@@ -94,7 +96,7 @@ namespace SmartHomeThermometer
 
                     /// TODO: Parse, cache received data and process then.
                     string data = Encoding.Unicode.GetString(bytes);
-                    data = data.Substring(0, data.IndexOf(";"));
+                    data = data.Substring(0, data.IndexOf(DELIMITER));
 
                     if (string.IsNullOrEmpty(data))
                     {
@@ -249,7 +251,7 @@ namespace SmartHomeThermometer
 
         private void SendInfo()
         {
-            byte[] bytes = Encoding.Unicode.GetBytes(NETWORK_DEVICE_ARG + "Thermometer" + ";");
+            byte[] bytes = Encoding.Unicode.GetBytes(NETWORK_DEVICE_ARG + "Thermometer" + DELIMITER);
 
             Send(bytes);
 
@@ -262,7 +264,7 @@ namespace SmartHomeThermometer
 
         private void SendUpdateInterval(double updateInterval)
         {
-            byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_UPDATE_INTERVAL_ARG + "{0}" + ";", updateInterval));
+            byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_UPDATE_INTERVAL_ARG + "{0}" + DELIMITER, updateInterval));
 
             Send(bytes);
 
@@ -275,7 +277,7 @@ namespace SmartHomeThermometer
 
         private void SendTemperature(double temperature)
         {
-            byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_TEMPERATURE_ARG + "{0}" + ";", temperature));
+            byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_TEMPERATURE_ARG + "{0}" + DELIMITER, temperature));
 
             Send(bytes);
 
@@ -289,11 +291,11 @@ namespace SmartHomeThermometer
 
         string CacheData(string data, ref List<string> cache)
         {
-            int delimiterIdx = data.IndexOf(';');
+            int delimiterIdx = data.IndexOf(DELIMITER);
             string first = data.Substring(0, delimiterIdx + 1);
 
             data = data.Substring(delimiterIdx + 1, data.Length - delimiterIdx - 1);
-            for (delimiterIdx = data.IndexOf(';'); delimiterIdx >= 0; delimiterIdx = data.IndexOf(';'))
+            for (delimiterIdx = data.IndexOf(DELIMITER); delimiterIdx >= 0; delimiterIdx = data.IndexOf(DELIMITER))
             {
                 cache.Add(data.Substring(0, delimiterIdx + 1));
                 data = data.Substring(delimiterIdx + 1, data.Length - delimiterIdx - 1);
@@ -309,7 +311,7 @@ namespace SmartHomeThermometer
             {
                 try
                 {
-                    int startIdx = idx + NETWORK_UPDATE_INTERVAL_ARG.Length, endIdx = data.IndexOf(";");
+                    int startIdx = idx + NETWORK_UPDATE_INTERVAL_ARG.Length, endIdx = data.IndexOf(DELIMITER);
                     int updateInterval = int.Parse(data.Substring(startIdx, endIdx - startIdx));
                     _Thermometer.UpdateInterval = updateInterval;
                 }
