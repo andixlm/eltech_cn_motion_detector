@@ -121,6 +121,8 @@ namespace SmartHomeThermometer
                     LogTextBlock.AppendText(UPDATE_INTERVAL_LOG_LABEL +
                         string.Format("Set to {0}\n", _UpdateInterval));
                     LogTextBlock.ScrollToEnd();
+
+                    SendUpdateInterval(_Thermometer.UpdateInterval);
                 }
                 catch (Exception exc)
                 {
