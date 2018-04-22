@@ -41,7 +41,7 @@ namespace SmartHomeThermometer
                 int interval = _UpdateInterval;
                 _Mutex.ReleaseMutex();
 
-                return interval;
+                return interval / 1000;
             }
 
             set
