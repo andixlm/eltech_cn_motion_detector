@@ -44,6 +44,8 @@ namespace SmartHomeThermometer
         private static readonly string NETWORK_TEMPERATURE_ARG = "Temperatute: ";
         private static readonly string NETWORK_UPDATE_INTERVAL_ARG = "Update interval: ";
 
+        private bool _ShouldScrollToEnd = true;
+
         private Thermometer _Thermometer;
 
         private int _UpdateInterval;
@@ -372,6 +374,15 @@ namespace SmartHomeThermometer
             }
 
             dataSet.Clear();
+        }
+
+        private void Log(string info)
+        {
+            Dispatcher.Invoke(delegate ()
+            {
+                LogTextBlock.AppendText(info);
+                if (_ShouldScrollToEnd) LogTextBlock.ScrollToEnd();
+            });
         }
     }
 }
