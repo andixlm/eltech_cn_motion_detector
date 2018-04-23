@@ -343,6 +343,18 @@ namespace SmartHomeThermometer
                     Log(NETWORK_LOG_LABEL + "Received incorrect update interval" + "\n");
                 }
             }
+            else if ((idx = data.IndexOf(NETWORK_METHOD_TO_INVOKE_ARG)) >= 0)
+            {
+                int startIdx = idx + NETWORK_METHOD_TO_INVOKE_ARG.Length, endIdx = data.IndexOf(DELIMITER);
+                string method = data.Substring(startIdx, endIdx - startIdx);
+
+                if (!string.IsNullOrEmpty(method) && method.Equals(NETWORK_METHOD_TO_UPDATE_TEMP))
+                {
+                    _Thermometer.UpdateTemperature();
+
+                    Log(NETWORK_LOG_LABEL + "Temperature update was requested and satisfied." + "\n");
+                }
+            }
             else
             {
                 Log(string.Format(NETWORK_LOG_LABEL + "Received unknown data: \"{0}\"" + "\n", data));
