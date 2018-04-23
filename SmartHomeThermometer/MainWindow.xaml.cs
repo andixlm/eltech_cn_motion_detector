@@ -43,6 +43,9 @@ namespace SmartHomeThermometer
         private static readonly string NETWORK_DEVICE_ARG = "Device: ";
         private static readonly string NETWORK_TEMPERATURE_ARG = "Temperatute: ";
         private static readonly string NETWORK_UPDATE_INTERVAL_ARG = "Update interval: ";
+        private static readonly string NETWORK_METHOD_TO_INVOKE_ARG = "Method: ";
+
+        private static readonly string NETWORK_METHOD_TO_UPDATE_TEMP = "UPDATE_TEMP";
 
         private bool _ShouldScrollToEnd = true;
 
