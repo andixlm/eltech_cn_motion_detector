@@ -316,7 +316,24 @@ namespace SmartHomeThermometer
                 {
                     int startIdx = idx + NETWORK_UPDATE_INTERVAL_ARG.Length, endIdx = data.IndexOf(DELIMITER);
                     int updateInterval = int.Parse(data.Substring(startIdx, endIdx - startIdx));
-                    _Thermometer.UpdateInterval = updateInterval;
+
+                    Log(NETWORK_LOG_LABEL + string.Format("Received update interval: {0}", updateInterval) + "\n");
+
+                    try
+                    {
+                        _Thermometer.UpdateInterval = updateInterval;
+
+                        Dispatcher.Invoke(delegate ()
+                        {
+                            UpdateIntervalTextBlock.Text = updateInterval.ToString();
+                        });
+                    }
+                    catch (Exception exc)
+                    {
+                        Log(UPDATE_INTERVAL_LOG_LABEL + exc.Message + "\n");
+
+                        SendUpdateInterval(_Thermometer.UpdateInterval);
+                    }
                 }
                 catch (FormatException)
                 {
