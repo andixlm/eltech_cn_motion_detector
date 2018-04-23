@@ -52,7 +52,8 @@ namespace SmartHomeThermometer
 
         private Thread _ListenerThread;
 
-        private Mutex _SocketMutex;
+        private Mutex _ReceiveMutex;
+        private Mutex _SendMutex;
 
         private List<string> _Cache;
 
@@ -76,7 +77,8 @@ namespace SmartHomeThermometer
 
             _Socket = new TcpClient();
 
-            _SocketMutex = new Mutex();
+            _ReceiveMutex = new Mutex();
+            _SendMutex = new Mutex();
 
             _Cache = new List<string>();
         }
@@ -94,9 +96,7 @@ namespace SmartHomeThermometer
                 while (_Socket.Connected)
                 {
                     byte[] bytes = new byte[BUFFER_SIZE];
-
-                    NetworkStream socketStream = _Socket.GetStream();
-                    socketStream.Read(bytes, 0, _Socket.ReceiveBufferSize);
+                    Receive(ref _Socket, bytes);
 
                     ProcessData(CacheData(Encoding.Unicode.GetString(bytes), ref _Cache));
                     ProcessData(ref _Cache);
@@ -236,13 +236,47 @@ namespace SmartHomeThermometer
 
         private void Send(byte[] bytes)
         {
-            _SocketMutex.WaitOne();
+            _SendMutex.WaitOne();
 
-            NetworkStream stream = _Socket.GetStream();
-            stream.Write(bytes, 0, bytes.Length);
-            stream.Flush();
+            try
+            {
+                NetworkStream stream = _Socket.GetStream();
+                stream.Write(bytes, 0, bytes.Length);
+                stream.Flush();
+            }
+            catch (System.IO.IOException exc)
+            {
+                Dispatcher.Invoke(delegate ()
+                {
+                    LogTextBlock.AppendText(NETWORK_LOG_LABEL +
+                        (exc.InnerException != null ? exc.InnerException.Message : exc.Message) + "\n");
+                    LogTextBlock.ScrollToEnd();
+                });
+            }
 
-            _SocketMutex.ReleaseMutex();
+            _SendMutex.ReleaseMutex();
+        }
+
+        private void Receive(ref TcpClient socket, byte[] bytes)
+        {
+            _ReceiveMutex.WaitOne();
+
+            try
+            {
+                NetworkStream stream = socket.GetStream();
+                stream.Read(bytes, 0, socket.ReceiveBufferSize);
+            }
+            catch (System.IO.IOException exc)
+            {
+                Dispatcher.Invoke(delegate ()
+                {
+                    LogTextBlock.AppendText(NETWORK_LOG_LABEL +
+                        (exc.InnerException != null ? exc.InnerException.Message : exc.Message) + "\n");
+                    LogTextBlock.ScrollToEnd();
+                });
+            }
+
+            _ReceiveMutex.ReleaseMutex();
         }
 
         private void SendInfo()
