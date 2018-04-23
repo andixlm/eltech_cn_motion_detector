@@ -120,7 +120,7 @@ namespace SmartHomeThermometer
                         string.Format("Set to {0}\n", _UpdateInterval));
                     LogTextBlock.ScrollToEnd();
 
-                    SendUpdateInterval(_Thermometer.UpdateInterval);
+                    if (_Socket.Connected) SendUpdateInterval(_Thermometer.UpdateInterval);
                 }
                 catch (Exception exc)
                 {
