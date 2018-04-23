@@ -98,7 +98,7 @@ namespace SmartHomeThermometer
                 while (_Socket.Connected)
                 {
                     byte[] bytes = new byte[BUFFER_SIZE];
-                    Receive(ref _Socket, bytes);
+                    Receive(ref _Socket, ref bytes);
 
                     ProcessData(CacheData(Encoding.Unicode.GetString(bytes), ref _Cache));
                     ProcessData(ref _Cache);
@@ -246,7 +246,7 @@ namespace SmartHomeThermometer
             _SendMutex.ReleaseMutex();
         }
 
-        private void Receive(ref TcpClient socket, byte[] bytes)
+        private void Receive(ref TcpClient socket, ref byte[] bytes)
         {
             _ReceiveMutex.WaitOne();
 
