@@ -347,14 +347,20 @@ namespace SmartHomeThermometer
                 }
                 catch (FormatException)
                 {
-                    LogTextBlock.AppendText(NETWORK_LOG_LABEL + "Received incorrect update interval" + "\n");
-                    LogTextBlock.ScrollToEnd();
+                    Dispatcher.Invoke(delegate ()
+                    {
+                        LogTextBlock.AppendText(NETWORK_LOG_LABEL + "Received incorrect update interval" + "\n");
+                        LogTextBlock.ScrollToEnd();
+                    });
                 }
             }
             else
             {
-                LogTextBlock.AppendText(string.Format(NETWORK_LOG_LABEL + "Received unknown data: \"{0}\"" + "\n", data));
-                LogTextBlock.ScrollToEnd();
+                Dispatcher.Invoke(delegate ()
+                {
+                    LogTextBlock.AppendText(string.Format(NETWORK_LOG_LABEL + "Received unknown data: \"{0}\"" + "\n", data));
+                    LogTextBlock.ScrollToEnd();
+                });
             }
         }
 
