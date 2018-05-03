@@ -352,7 +352,7 @@ namespace SmartHomeThermometer
                 {
                     _Thermometer.UpdateTemperature();
 
-                    Log(NETWORK_LOG_LABEL + "Temperature update was requested and satisfied." + "\n");
+                    Log(NETWORK_LOG_LABEL + "Temperature update was requested." + "\n");
                 }
             }
             else
