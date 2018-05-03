@@ -94,6 +94,14 @@ namespace SmartHomeThermometer
             Closed += (sender, e) =>
             {
                 _Thermometer.Dispose();
+                if (_Socket.Connected)
+                {
+                    _Socket.Close();
+                }
+                if (_ListenerThread.IsAlive)
+                {
+                    _ListenerThread.Abort();
+                }
             };
 
             _ListenerThread = new Thread(new ThreadStart(delegate ()
