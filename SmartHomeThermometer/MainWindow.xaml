@@ -18,11 +18,11 @@
                             <Label Content="Connection:" />
                             <Label Name="ConnectionStateLabel" Content="down" />
 
-                            <TextBox Name="AddressTextBox" Width="96" />
-                            <TextBox Name="PortTextBox" Width="44" />
+                            <TextBox Name="AddressTextBox" Width="90" />
+                            <TextBox Name="PortTextBox" Width="40" />
 
-                            <Button Name="ConnectButton" HorizontalAlignment="Right" Width="64" Content="Connect" />
-                            <Button Name="DisconnectButton" HorizontalAlignment="Right" Width="60" Content="Disconnect" />
+                            <Button Name="ConnectButton" Margin="2" HorizontalAlignment="Right" Width="48" Content="Connect" />
+                            <Button Name="DisconnectButton" Margin="2" HorizontalAlignment="Right" Width="60" Content="Disconnect" />
                         </DockPanel>
 
                         <Separator />
@@ -31,7 +31,7 @@
                             <Label Content="Update interval:" />
                             <TextBox Name="UpdateIntervalTextBlock" Width="48" />
 
-                            <Button Name="UpdateIntervalSetButton" HorizontalAlignment="Right" Width="64" Content="Set" />
+                            <Button Name="UpdateIntervalSetButton" Margin="2" HorizontalAlignment="Right" Width="64" Content="Set" />
                         </DockPanel>
 
                         <Separator />
@@ -40,7 +40,7 @@
                             <Label Content="Temperature:" />
                             <Label Name="TemperatureValueLabel" Content="null" />
 
-                            <Button Name="TemperatureUpdateButton" HorizontalAlignment="Right" Width="64" Content="Update" />
+                            <Button Name="TemperatureUpdateButton" Margin="2" HorizontalAlignment="Right" Width="64" Content="Update" />
                         </DockPanel>
 
                     </StackPanel>
