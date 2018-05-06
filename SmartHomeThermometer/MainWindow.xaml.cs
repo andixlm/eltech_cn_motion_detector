@@ -80,8 +80,6 @@ namespace SmartHomeThermometer
             _UpdateInterval = Thermometer.DEFAULT_UPDATE_INTERVAL;
             UpdateIntervalTextBlock.Text = _UpdateInterval.ToString();
 
-            _Socket = new TcpClient();
-
             _ReceiveMutex = new Mutex();
             _SendMutex = new Mutex();
 
@@ -119,7 +117,7 @@ namespace SmartHomeThermometer
 
                     Log(UPDATE_INTERVAL_LOG_LABEL + string.Format("Set to {0}\n", _UpdateInterval));
 
-                    if (_Socket.Connected) SendUpdateInterval(_Thermometer.UpdateInterval);
+                    if (_Socket != null && _Socket.Connected) SendUpdateInterval(_Thermometer.UpdateInterval);
                 }
                 catch (Exception exc)
                 {
@@ -140,7 +138,7 @@ namespace SmartHomeThermometer
                     TemperatureValueLabel.Content = temperature.ToString("F2");
                 });
 
-                if (_Socket.Connected)
+                if (_Socket != null && _Socket.Connected)
                 {
                     SendTemperature(temperature);
                 }
@@ -153,7 +151,7 @@ namespace SmartHomeThermometer
             {
                 try
                 {
-                    while (_Socket.Connected)
+                    while (_Socket != null && _Socket.Connected)
                     {
                         byte[] bytes = new byte[BUFFER_SIZE];
                         Receive(ref _Socket, ref bytes);
@@ -184,6 +182,7 @@ namespace SmartHomeThermometer
 
                 try
                 {
+                    _Socket = new TcpClient();
                     _Socket.Connect(_IPAddress, _Port);
 
                     Log(CONNECTION_LOG_LABEL +
@@ -259,17 +258,15 @@ namespace SmartHomeThermometer
                 _ListenerThread.Abort();
             }
 
-            if (!_Socket.Connected)
+            if (_Socket != null)
             {
-                SwitchButtonsOnConnectionStatusChanged();
-                return;
-            }
-            else
-            {
-                _Socket.Close();
+                if (_Socket.Connected)
+                {
+                    _Socket.Close();
 
-                /// Bad idea due to bad design.
-                _Socket = new TcpClient();
+                    /// Bad idea due to bad design.
+                    _Socket = new TcpClient();
+                }
             }
 
             SwitchButtonsOnConnectionStatusChanged(false);
@@ -287,6 +284,11 @@ namespace SmartHomeThermometer
 
         private void Send(byte[] bytes)
         {
+            if (_Socket == null)
+            {
+                return;
+            }
+
             _SendMutex.WaitOne();
 
             try
@@ -307,6 +309,11 @@ namespace SmartHomeThermometer
 
         private void Receive(ref TcpClient socket, ref byte[] bytes)
         {
+            if (_Socket == null)
+            {
+                return;
+            }
+
             _ReceiveMutex.WaitOne();
 
             try
