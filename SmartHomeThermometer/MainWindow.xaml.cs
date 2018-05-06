@@ -164,7 +164,7 @@ namespace SmartHomeThermometer
                 }
                 catch (ThreadAbortException)
                 {
-                    return;
+                    Log(NETWORK_LOG_LABEL + "Listener thread was terminated" + '\n');
                 }
             }));
         }
@@ -268,6 +268,8 @@ namespace SmartHomeThermometer
             {
                 _Socket.Close();
             }
+
+            Log(CONNECTION_LOG_LABEL + "Connection was manually closed" + '\n');
         }
 
         private void Send(byte[] bytes)
