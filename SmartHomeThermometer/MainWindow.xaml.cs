@@ -94,14 +94,7 @@ namespace SmartHomeThermometer
             Closed += (sender, e) =>
             {
                 _Thermometer.Dispose();
-                if (_Socket.Connected)
-                {
-                    _Socket.Close();
-                }
-                if (_ListenerThread.IsAlive)
-                {
-                    _ListenerThread.Interrupt();
-                }
+                Disconnect();
             };
 
             _ListenerThread = ConfigureListenerThread();
@@ -110,6 +103,11 @@ namespace SmartHomeThermometer
             ConnectButton.Click += (sender, e) =>
             {
                 Connect();
+            };
+
+            DisconnectButton.Click += (sender, e) =>
+            {
+                Disconnect();
             };
 
             UpdateIntervalSetButton.Click += (sender, e) =>
@@ -253,6 +251,23 @@ namespace SmartHomeThermometer
 
             Thread connectThread = ConfigureConnectThread();
             connectThread.Start();
+        }
+
+        private void Disconnect()
+        {
+            if (_ListenerThread.IsAlive)
+            {
+                _ListenerThread.Abort();
+            }
+
+            if (!_Socket.Connected)
+            {
+                return;
+            }
+            else
+            {
+                _Socket.Close();
+            }
         }
 
         private void Send(byte[] bytes)
