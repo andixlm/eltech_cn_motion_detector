@@ -98,11 +98,13 @@ namespace SmartHomeThermometer
             };
 
             /// Controls
+            ConnectButton.IsEnabled = true;
             ConnectButton.Click += (sender, e) =>
             {
                 Connect();
             };
 
+            DisconnectButton.IsEnabled = false;
             DisconnectButton.Click += (sender, e) =>
             {
                 Disconnect();
@@ -176,6 +178,7 @@ namespace SmartHomeThermometer
                 Dispatcher.Invoke(delegate ()
                 {
                     ConnectionStateLabel.Content = CONNECTION_WAIT;
+                    SwitchButtonsOnConnectionStatusChanged();
                 });
 
                 try
@@ -201,7 +204,7 @@ namespace SmartHomeThermometer
                     Dispatcher.Invoke(delegate ()
                     {
                         ConnectionStateLabel.Content = CONNECTION_ERR;
-                        ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
+                        SwitchButtonsOnConnectionStatusChanged();
                     });
                 }
                 catch (ObjectDisposedException exc)
@@ -210,7 +213,7 @@ namespace SmartHomeThermometer
                     Dispatcher.Invoke(delegate ()
                     {
                         ConnectionStateLabel.Content = CONNECTION_DOWN;
-                        ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
+                        SwitchButtonsOnConnectionStatusChanged();
                     });
                 }
             }));
@@ -218,8 +221,6 @@ namespace SmartHomeThermometer
 
         private void Connect()
         {
-            ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
-
             try
             {
                 _IPAddress = IPAddress.Parse(AddressTextBox.Text);
@@ -227,7 +228,6 @@ namespace SmartHomeThermometer
             catch (Exception exc)
             {
                 Log(IPADDRESS_LOG_LABEL + exc.Message + '\n');
-                ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
                 return;
             }
 
@@ -244,7 +244,6 @@ namespace SmartHomeThermometer
             catch (Exception exc)
             {
                 Log(PORT_LOG_LABEL + exc.Message + '\n');
-                ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
                 return;
             }
 
@@ -261,6 +260,7 @@ namespace SmartHomeThermometer
 
             if (!_Socket.Connected)
             {
+                SwitchButtonsOnConnectionStatusChanged();
                 return;
             }
             else
@@ -268,7 +268,14 @@ namespace SmartHomeThermometer
                 _Socket.Close();
             }
 
+            SwitchButtonsOnConnectionStatusChanged();
             Log(CONNECTION_LOG_LABEL + "Connection was manually closed" + '\n');
+        }
+
+        private void SwitchButtonsOnConnectionStatusChanged()
+        {
+            ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
+            DisconnectButton.IsEnabled = !DisconnectButton.IsEnabled;
         }
 
         private void Send(byte[] bytes)
