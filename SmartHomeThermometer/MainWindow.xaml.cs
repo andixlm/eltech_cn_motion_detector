@@ -164,6 +164,7 @@ namespace SmartHomeThermometer
                 }
                 catch (ThreadAbortException)
                 {
+                    _ReceiveMutex.ReleaseMutex();
                     Log(NETWORK_LOG_LABEL + "Listener thread was terminated" + '\n');
                 }
             }));
