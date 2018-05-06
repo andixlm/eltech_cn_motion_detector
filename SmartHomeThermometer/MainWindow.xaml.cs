@@ -153,13 +153,20 @@ namespace SmartHomeThermometer
         {
             return new Thread(new ThreadStart(delegate ()
             {
-                while (_Socket.Connected)
+                try
                 {
-                    byte[] bytes = new byte[BUFFER_SIZE];
-                    Receive(ref _Socket, ref bytes);
+                    while (_Socket.Connected)
+                    {
+                        byte[] bytes = new byte[BUFFER_SIZE];
+                        Receive(ref _Socket, ref bytes);
 
-                    ProcessData(CacheData(Encoding.Unicode.GetString(bytes), ref _Cache));
-                    ProcessData(ref _Cache);
+                        ProcessData(CacheData(Encoding.Unicode.GetString(bytes), ref _Cache));
+                        ProcessData(ref _Cache);
+                    }
+                }
+                catch (ThreadAbortException)
+                {
+                    return;
                 }
             }));
         }
