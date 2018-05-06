@@ -97,8 +97,6 @@ namespace SmartHomeThermometer
                 Disconnect();
             };
 
-            _ListenerThread = ConfigureListenerThread();
-
             /// Controls
             ConnectButton.Click += (sender, e) =>
             {
@@ -194,7 +192,8 @@ namespace SmartHomeThermometer
                     SendInfo();
                     SendUpdateInterval(_UpdateInterval);
 
-                    _ListenerThread?.Start();
+                    _ListenerThread = ConfigureListenerThread();
+                    _ListenerThread.Start();
                 }
                 catch (SocketException exc)
                 {
