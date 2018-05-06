@@ -100,21 +100,11 @@ namespace SmartHomeThermometer
                 }
                 if (_ListenerThread.IsAlive)
                 {
-                    _ListenerThread.Abort();
+                    _ListenerThread.Interrupt();
                 }
             };
 
-            _ListenerThread = new Thread(new ThreadStart(delegate ()
-            {
-                while (_Socket.Connected)
-                {
-                    byte[] bytes = new byte[BUFFER_SIZE];
-                    Receive(ref _Socket, ref bytes);
-
-                    ProcessData(CacheData(Encoding.Unicode.GetString(bytes), ref _Cache));
-                    ProcessData(ref _Cache);
-                }
-            }));
+            _ListenerThread = ConfigureListenerThread();
 
             /// Controls
             ConnectButton.Click += (sender, e) =>
@@ -159,6 +149,69 @@ namespace SmartHomeThermometer
             };
         }
 
+        private Thread ConfigureListenerThread()
+        {
+            return new Thread(new ThreadStart(delegate ()
+            {
+                while (_Socket.Connected)
+                {
+                    byte[] bytes = new byte[BUFFER_SIZE];
+                    Receive(ref _Socket, ref bytes);
+
+                    ProcessData(CacheData(Encoding.Unicode.GetString(bytes), ref _Cache));
+                    ProcessData(ref _Cache);
+                }
+            }));
+        }
+
+        private Thread ConfigureConnectThread()
+        {
+            return new Thread(new ThreadStart(delegate ()
+            {
+                Log((CONNECTION_LOG_LABEL +
+                    string.Format("Connecting to {0}:{1}\n", _IPAddress.ToString(), _Port)));
+                Dispatcher.Invoke(delegate ()
+                {
+                    ConnectionStateLabel.Content = CONNECTION_WAIT;
+                });
+
+                try
+                {
+                    _Socket.Connect(_IPAddress, _Port);
+
+                    Log(CONNECTION_LOG_LABEL +
+                        string.Format("Connected to {0}:{1}\n", _IPAddress.ToString(), _Port));
+                    Dispatcher.Invoke(delegate ()
+                    {
+                        ConnectionStateLabel.Content = CONNECTION_UP;
+                    });
+
+                    SendInfo();
+                    SendUpdateInterval(_UpdateInterval);
+
+                    _ListenerThread?.Start();
+                }
+                catch (SocketException exc)
+                {
+                    Log(CONNECTION_LOG_LABEL + exc.Message + "\n");
+                    Dispatcher.Invoke(delegate ()
+                    {
+                        ConnectionStateLabel.Content = CONNECTION_ERR;
+                        ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
+                    });
+                }
+                catch (ObjectDisposedException exc)
+                {
+                    Log(CONNECTION_LOG_LABEL + exc.Message + "\n");
+                    Dispatcher.Invoke(delegate ()
+                    {
+                        ConnectionStateLabel.Content = CONNECTION_DOWN;
+                        ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
+                    });
+                }
+            }));
+        }
+
         private void Connect()
         {
             ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
@@ -191,50 +244,7 @@ namespace SmartHomeThermometer
                 return;
             }
 
-            Thread connectThread = new Thread(new ThreadStart(delegate ()
-            {
-                Log((CONNECTION_LOG_LABEL +
-                    string.Format("Connecting to {0}:{1}\n", _IPAddress.ToString(), _Port)));
-                Dispatcher.Invoke(delegate ()
-                {
-                    ConnectionStateLabel.Content = CONNECTION_WAIT;
-                });
-
-                try
-                {
-                    _Socket.Connect(_IPAddress, _Port);
-
-                    Log(CONNECTION_LOG_LABEL +
-                        string.Format("Connected to {0}:{1}\n", _IPAddress.ToString(), _Port));
-                    Dispatcher.Invoke(delegate ()
-                    {
-                        ConnectionStateLabel.Content = CONNECTION_UP;
-                    });
-
-                    SendInfo();
-                    SendUpdateInterval(_UpdateInterval);
-
-                    _ListenerThread.Start();
-                }
-                catch (SocketException exc)
-                {
-                    Log(CONNECTION_LOG_LABEL + exc.Message + "\n");
-                    Dispatcher.Invoke(delegate ()
-                    {
-                        ConnectionStateLabel.Content = CONNECTION_ERR;
-                        ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
-                    });
-                }
-                catch (ObjectDisposedException exc)
-                {
-                    Log(CONNECTION_LOG_LABEL + exc.Message + "\n");
-                    Dispatcher.Invoke(delegate ()
-                    {
-                        ConnectionStateLabel.Content = CONNECTION_DOWN;
-                        ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
-                    });
-                }
-            }));
+            Thread connectThread = ConfigureConnectThread();
             connectThread.Start();
         }
 
