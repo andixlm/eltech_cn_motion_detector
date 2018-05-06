@@ -179,7 +179,7 @@ namespace SmartHomeThermometer
                 Dispatcher.Invoke(delegate ()
                 {
                     ConnectionStateLabel.Content = CONNECTION_WAIT;
-                    SwitchButtonsOnConnectionStatusChanged();
+                    SwitchButtonsOnConnectionStatusChanged(true);
                 });
 
                 try
@@ -205,7 +205,7 @@ namespace SmartHomeThermometer
                     Dispatcher.Invoke(delegate ()
                     {
                         ConnectionStateLabel.Content = CONNECTION_ERR;
-                        SwitchButtonsOnConnectionStatusChanged();
+                        SwitchButtonsOnConnectionStatusChanged(false);
                     });
                 }
                 catch (ObjectDisposedException exc)
@@ -214,7 +214,7 @@ namespace SmartHomeThermometer
                     Dispatcher.Invoke(delegate ()
                     {
                         ConnectionStateLabel.Content = CONNECTION_DOWN;
-                        SwitchButtonsOnConnectionStatusChanged();
+                        SwitchButtonsOnConnectionStatusChanged(false);
                     });
                 }
             }));
@@ -272,14 +272,17 @@ namespace SmartHomeThermometer
                 _Socket = new TcpClient();
             }
 
-            SwitchButtonsOnConnectionStatusChanged();
+            SwitchButtonsOnConnectionStatusChanged(false);
             Log(CONNECTION_LOG_LABEL + "Connection was manually closed" + '\n');
         }
 
-        private void SwitchButtonsOnConnectionStatusChanged()
+        private void SwitchButtonsOnConnectionStatusChanged(bool isConnected)
         {
-            ConnectButton.IsEnabled = !ConnectButton.IsEnabled;
-            DisconnectButton.IsEnabled = !DisconnectButton.IsEnabled;
+            Dispatcher.Invoke(delegate ()
+            {
+                ConnectButton.IsEnabled = !isConnected;
+                DisconnectButton.IsEnabled = isConnected;
+            });
         }
 
         private void Send(byte[] bytes)
@@ -294,6 +297,7 @@ namespace SmartHomeThermometer
             }
             catch (System.IO.IOException exc)
             {
+                SwitchButtonsOnConnectionStatusChanged(false);
                 Log(NETWORK_LOG_LABEL +
                     (exc.InnerException != null ? exc.InnerException.Message : exc.Message) + '\n');
             }
@@ -312,6 +316,7 @@ namespace SmartHomeThermometer
             }
             catch (System.IO.IOException exc)
             {
+                SwitchButtonsOnConnectionStatusChanged(false);
                 Log(NETWORK_LOG_LABEL +
                     (exc.InnerException != null ? exc.InnerException.Message : exc.Message) + '\n');
             }
