@@ -369,6 +369,11 @@ namespace SmartHomeThermometer
 
         private void ProcessData(string data)
         {
+            if (string.IsNullOrEmpty(data) || data.Equals(""))
+            {
+                return;
+            }
+
             int idx;
             if ((idx = data.IndexOf(NETWORK_UPDATE_INTERVAL_ARG)) >= 0)
             {
