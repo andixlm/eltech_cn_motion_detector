@@ -22,6 +22,7 @@
                             <TextBox Name="PortTextBox" Width="44" />
 
                             <Button Name="ConnectButton" HorizontalAlignment="Right" Width="64" Content="Connect" />
+                            <Button Name="DisconnectButton" HorizontalAlignment="Right" Width="60" Content="Disconnect" />
                         </DockPanel>
 
                         <Separator />
