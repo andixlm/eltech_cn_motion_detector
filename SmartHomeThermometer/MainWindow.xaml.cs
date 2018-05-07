@@ -442,11 +442,18 @@ namespace SmartHomeThermometer
 
         private void Log(string info)
         {
-            Dispatcher.Invoke(delegate ()
+            try
             {
-                LogTextBlock.AppendText(info);
-                if (_ShouldScrollToEnd) LogTextBlock.ScrollToEnd();
-            });
+                Dispatcher.Invoke(delegate ()
+                {
+                    LogTextBlock.AppendText(info);
+                    if (_ShouldScrollToEnd) LogTextBlock.ScrollToEnd();
+                });
+            }
+            catch (TaskCanceledException)
+            {
+                return;
+            }
         }
     }
 }
