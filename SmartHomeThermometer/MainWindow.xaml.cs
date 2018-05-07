@@ -359,6 +359,15 @@ namespace SmartHomeThermometer
                 string.Format("Sent temperature: {0}", temperature.ToString("F2")) + '\n');
         }
 
+        private void SendMethodToInvoke(string method)
+        {
+            byte[] bytes = Encoding.Unicode.GetBytes(NETWORK_METHOD_TO_INVOKE_ARG + method + DELIMITER);
+
+            Send(bytes);
+
+            Log(NETWORK_LOG_LABEL + "Sent method to close connection" + '\n');
+        }
+
         string CacheData(string data, ref List<string> cache)
         {
             int delimiterIdx = data.IndexOf(DELIMITER);
