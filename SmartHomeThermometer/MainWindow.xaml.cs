@@ -46,6 +46,7 @@ namespace SmartHomeThermometer
         private static readonly string NETWORK_METHOD_TO_INVOKE_ARG = "Method: ";
 
         private static readonly string NETWORK_METHOD_TO_UPDATE_TEMP = "UPDATE_TEMP";
+        private static readonly string NETWORK_METHOD_TO_DISCONNECT = "DISCONNECT";
 
         private bool _ShouldScrollToEnd = true;
 
@@ -253,6 +254,8 @@ namespace SmartHomeThermometer
 
         private void Disconnect()
         {
+            SendMethodToInvoke(NETWORK_METHOD_TO_DISCONNECT);
+
             if (_ListenerThread.IsAlive)
             {
                 _ListenerThread.Abort();
