@@ -172,16 +172,13 @@ namespace SmartHomeThermometer
             {
                 try
                 {
-                    while (_Socket != null)
+                    while (_Socket != null && _Socket.Connected)
                     {
-                        if (_Socket.Connected)
-                        {
-                            byte[] bytes = new byte[BUFFER_SIZE];
-                            Receive(ref _Socket, ref bytes);
+                        byte[] bytes = new byte[BUFFER_SIZE];
+                        Receive(ref _Socket, ref bytes);
 
-                            ProcessData(CacheData(Encoding.Unicode.GetString(bytes), ref _Cache));
-                            ProcessData(ref _Cache);
-                        }
+                        ProcessData(CacheData(Encoding.Unicode.GetString(bytes), ref _Cache));
+                        ProcessData(ref _Cache);
                     }
                 }
                 catch (ThreadAbortException)
