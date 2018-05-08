@@ -30,6 +30,8 @@ namespace SmartHomeThermometer
         private static readonly int MINIMAL_PORT_VALUE = 1024;
         private static readonly int MAXIMAL_PORT_VALUE = 49151;
 
+        private static readonly string THERMOMETER_LOG_LABEL = "Thermometer: ";
+
         private static readonly string CONNECTION_LOG_LABEL = "Connection: ";
         private static readonly string CONNECTION_UP = "up";
         private static readonly string CONNECTION_WAIT = "wait";
@@ -464,7 +466,7 @@ namespace SmartHomeThermometer
             }
             catch (TaskCanceledException)
             {
-                return;
+                Log(THERMOMETER_LOG_LABEL + "TaskCancelledException while Log's being executed" + '\n');
             }
         }
     }
