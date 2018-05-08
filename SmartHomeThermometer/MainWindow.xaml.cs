@@ -187,6 +187,7 @@ namespace SmartHomeThermometer
                     {
                         _ReceiveMutex.ReleaseMutex();
 
+                        Log(NETWORK_LOG_LABEL + "Disconnected." + '\n');
                         if (_VerboseLogging)
                         {
                             Log(NETWORK_LOG_LABEL + "Listener thread was terminated" + '\n');
