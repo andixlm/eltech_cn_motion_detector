@@ -179,7 +179,7 @@ namespace SmartHomeThermometer
                     }
                     catch (ApplicationException)
                     {
-                        Log(THERMOMETER_LOG_LABEL + "Mutex's been tried to be released by other thread." + '\n');
+                        Log(THERMOMETER_LOG_LABEL + "Mutex's been tried to be released not by the owner thread." + '\n');
                     }
                 }
             }));
@@ -475,7 +475,10 @@ namespace SmartHomeThermometer
                 Dispatcher.Invoke(delegate ()
                 {
                     LogTextBlock.AppendText(info);
-                    if (_ShouldScrollToEnd) LogTextBlock.ScrollToEnd();
+                    if (_ShouldScrollToEnd)
+                    {
+                        LogTextBlock.ScrollToEnd();
+                    }
                 });
             }
             catch (TaskCanceledException)
