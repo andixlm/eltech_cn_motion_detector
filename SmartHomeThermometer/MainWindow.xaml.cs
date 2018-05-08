@@ -50,8 +50,8 @@ namespace SmartHomeThermometer
         private static readonly string NETWORK_METHOD_TO_UPDATE_TEMP = "UPDATE_TEMP";
         private static readonly string NETWORK_METHOD_TO_DISCONNECT = "DISCONNECT";
 
-        private bool _VerboseLogging = false;
-        private bool _ShouldScrollToEnd = true;
+        private bool _VerboseLogging;
+        private bool _ShouldScrollToEnd;
 
         private Thermometer _Thermometer;
 
@@ -96,6 +96,9 @@ namespace SmartHomeThermometer
 
         private void Configure()
         {
+            _VerboseLogging = false;
+            _ShouldScrollToEnd = true;
+
             /// App
             Closed += (sender, e) =>
             {
