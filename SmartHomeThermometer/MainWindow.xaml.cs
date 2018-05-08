@@ -63,6 +63,8 @@ namespace SmartHomeThermometer
         private Mutex _ReceiveMutex;
         private Mutex _SendMutex;
 
+        private Mutex _DataMutex;
+
         private List<string> _Cache;
 
         private IPAddress _IPAddress;
@@ -85,6 +87,8 @@ namespace SmartHomeThermometer
 
             _ReceiveMutex = new Mutex();
             _SendMutex = new Mutex();
+
+            _DataMutex = new Mutex();
 
             _Cache = new List<string>();
         }
@@ -460,12 +464,16 @@ namespace SmartHomeThermometer
 
         private void ProcessData(ref List<string> dataSet)
         {
+            _DataMutex.WaitOne();
+
             foreach (string data in dataSet)
             {
                 ProcessData(data);
             }
 
             dataSet.Clear();
+
+            _DataMutex.ReleaseMutex();
         }
 
         private void Log(string info)
