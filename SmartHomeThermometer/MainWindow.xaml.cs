@@ -282,10 +282,14 @@ namespace SmartHomeThermometer
                 if (_Socket.Connected)
                 {
                     _Socket.Close();
-
-                    /// Bad idea due to bad design.
-                    _Socket = new TcpClient();
                 }
+                else
+                {
+                    _Socket.Dispose();
+                }
+
+                /// Bad idea due to bad design.
+                _Socket = new TcpClient();
             }
 
             SwitchButtonsOnConnectionStatusChanged(false);
