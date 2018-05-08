@@ -353,6 +353,10 @@ namespace SmartHomeThermometer
                     Log(NETWORK_LOG_LABEL +
                         (exc.InnerException != null ? exc.InnerException.Message : exc.Message) + '\n');
                 }
+                else
+                {
+                    Log(CONNECTION_LOG_LABEL + "Connection's unavailable." + '\n');
+                }
             }
 
             _SendMutex.ReleaseMutex();
@@ -379,6 +383,10 @@ namespace SmartHomeThermometer
                 {
                     Log(NETWORK_LOG_LABEL +
                         (exc.InnerException != null ? exc.InnerException.Message : exc.Message) + '\n');
+                }
+                else
+                {
+                    Log(CONNECTION_LOG_LABEL + "Connection's unavailable." + '\n');
                 }
             }
 
