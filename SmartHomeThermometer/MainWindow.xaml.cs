@@ -101,6 +101,7 @@ namespace SmartHomeThermometer
             {
                 _Thermometer.Dispose();
                 Disconnect();
+                _Socket = null;
             };
 
             /// Controls
@@ -114,6 +115,9 @@ namespace SmartHomeThermometer
             DisconnectButton.Click += (sender, e) =>
             {
                 Disconnect();
+
+                /// Bad idea due to bad design.
+                _Socket = new TcpClient();
             };
 
             UpdateIntervalSetButton.Click += (sender, e) =>
@@ -307,9 +311,6 @@ namespace SmartHomeThermometer
                 {
                     _Socket.Dispose();
                 }
-
-                /// Bad idea due to bad design.
-                _Socket = new TcpClient();
             }
 
             SwitchButtonsOnConnectionStatusChanged(false);
