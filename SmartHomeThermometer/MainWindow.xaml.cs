@@ -550,10 +550,7 @@ namespace SmartHomeThermometer
             }
             catch (TaskCanceledException)
             {
-                if (_VerboseLogging)
-                {
-                    Log(THERMOMETER_LOG_LABEL + "TaskCancelledException while Log's being executed" + '\n');
-                }
+                return;
             }
         }
     }
