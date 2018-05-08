@@ -46,9 +46,13 @@ namespace SmartHomeThermometer
         private static readonly string NETWORK_TEMPERATURE_ARG = "Temperatute: ";
         private static readonly string NETWORK_UPDATE_INTERVAL_ARG = "Update interval: ";
         private static readonly string NETWORK_METHOD_TO_INVOKE_ARG = "Method: ";
+        private static readonly string NETWORK_STATUS_ARG = "Status: ";
 
         private static readonly string NETWORK_METHOD_TO_UPDATE_TEMP = "UPDATE_TEMP";
         private static readonly string NETWORK_METHOD_TO_DISCONNECT = "DISCONNECT";
+        private static readonly string NETWORK_METHOD_TO_REQUEST_STATUS = "REQUEST_STATUS";
+
+        private static readonly int DEVICE_STATUS_UP = 42;
 
         private bool _VerboseLogging;
         private bool _ShouldScrollToEnd;
@@ -418,6 +422,17 @@ namespace SmartHomeThermometer
                 string.Format("Sent temperature: {0}", temperature.ToString("F2")) + '\n');
         }
 
+        private void SendStatus()
+        {
+            byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_STATUS_ARG + "{0}" + DELIMITER, DEVICE_STATUS_UP));
+            Send(bytes);
+
+            if (_VerboseLogging)
+            {
+                Log(NETWORK_LOG_LABEL + string.Format("Sent status: {0}", DEVICE_STATUS_UP) + '\n');
+            }
+        }
+
         private void SendMethodToInvoke(string method)
         {
             byte[] bytes = Encoding.Unicode.GetBytes(NETWORK_METHOD_TO_INVOKE_ARG + method + DELIMITER);
@@ -489,6 +504,15 @@ namespace SmartHomeThermometer
                     _Thermometer.UpdateTemperature();
 
                     Log(NETWORK_LOG_LABEL + "Temperature update was requested." + '\n');
+                }
+                else if (!string.IsNullOrEmpty(method) && method.Equals(NETWORK_METHOD_TO_REQUEST_STATUS))
+                {
+                    SendStatus();
+
+                    if (_VerboseLogging)
+                    {
+                        Log(NETWORK_LOG_LABEL + "Status was requested." + '\n');
+                    }
                 }
             }
             else
