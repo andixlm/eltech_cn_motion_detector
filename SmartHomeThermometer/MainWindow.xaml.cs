@@ -50,6 +50,7 @@ namespace SmartHomeThermometer
         private static readonly string NETWORK_METHOD_TO_UPDATE_TEMP = "UPDATE_TEMP";
         private static readonly string NETWORK_METHOD_TO_DISCONNECT = "DISCONNECT";
 
+        private bool _VerboseLogging = false;
         private bool _ShouldScrollToEnd = true;
 
         private Thermometer _Thermometer;
@@ -131,7 +132,10 @@ namespace SmartHomeThermometer
                 }
                 catch (Exception exc)
                 {
-                    Log(UPDATE_INTERVAL_LOG_LABEL + exc.Message + '\n');
+                    if (_VerboseLogging)
+                    {
+                        Log(UPDATE_INTERVAL_LOG_LABEL + exc.Message + '\n');
+                    }
                 }
             };
 
@@ -179,11 +183,17 @@ namespace SmartHomeThermometer
                     {
                         _ReceiveMutex.ReleaseMutex();
 
-                        Log(NETWORK_LOG_LABEL + "Listener thread was terminated" + '\n');
+                        if (_VerboseLogging)
+                        {
+                            Log(NETWORK_LOG_LABEL + "Listener thread was terminated" + '\n');
+                        }
                     }
                     catch (ApplicationException)
                     {
-                        Log(THERMOMETER_LOG_LABEL + "Mutex's been tried to be released not by the owner thread." + '\n');
+                        if (_VerboseLogging)
+                        {
+                            Log(THERMOMETER_LOG_LABEL + "Mutex's been tried to be released not by the owner thread." + '\n');
+                        }
                     }
                 }
             }));
@@ -226,7 +236,10 @@ namespace SmartHomeThermometer
                         ConnectionStateLabel.Content = CONNECTION_ERR;
                         SwitchButtonsOnConnectionStatusChanged(false);
                     });
-                    Log(CONNECTION_LOG_LABEL + exc.Message + '\n');
+                    if (_VerboseLogging)
+                    {
+                        Log(CONNECTION_LOG_LABEL + exc.Message + '\n');
+                    }
                 }
                 catch (ObjectDisposedException exc)
                 {
@@ -235,7 +248,10 @@ namespace SmartHomeThermometer
                         ConnectionStateLabel.Content = CONNECTION_DOWN;
                         SwitchButtonsOnConnectionStatusChanged(false);
                     });
-                    Log(CONNECTION_LOG_LABEL + exc.Message + '\n');
+                    if (_VerboseLogging)
+                    {
+                        Log(CONNECTION_LOG_LABEL + exc.Message + '\n');
+                    }
                 }
             }));
         }
@@ -297,7 +313,10 @@ namespace SmartHomeThermometer
             }
 
             SwitchButtonsOnConnectionStatusChanged(false);
-            Log(CONNECTION_LOG_LABEL + "Connection was manually closed" + '\n');
+            if (_VerboseLogging)
+            {
+                Log(CONNECTION_LOG_LABEL + "Connection was manually closed" + '\n');
+            }
         }
 
         private void SwitchButtonsOnConnectionStatusChanged(bool isConnected)
@@ -327,8 +346,11 @@ namespace SmartHomeThermometer
             catch (System.IO.IOException exc)
             {
                 SwitchButtonsOnConnectionStatusChanged(false);
-                Log(NETWORK_LOG_LABEL +
-                    (exc.InnerException != null ? exc.InnerException.Message : exc.Message) + '\n');
+                if (_VerboseLogging)
+                {
+                    Log(NETWORK_LOG_LABEL +
+                        (exc.InnerException != null ? exc.InnerException.Message : exc.Message) + '\n');
+                }
             }
 
             _SendMutex.ReleaseMutex();
@@ -351,8 +373,11 @@ namespace SmartHomeThermometer
             catch (System.IO.IOException exc)
             {
                 SwitchButtonsOnConnectionStatusChanged(false);
-                Log(NETWORK_LOG_LABEL +
-                    (exc.InnerException != null ? exc.InnerException.Message : exc.Message) + '\n');
+                if (_VerboseLogging)
+                {
+                    Log(NETWORK_LOG_LABEL +
+                        (exc.InnerException != null ? exc.InnerException.Message : exc.Message) + '\n');
+                }
             }
 
             _ReceiveMutex.ReleaseMutex();
@@ -491,7 +516,10 @@ namespace SmartHomeThermometer
             }
             catch (TaskCanceledException)
             {
-                Log(THERMOMETER_LOG_LABEL + "TaskCancelledException while Log's being executed" + '\n');
+                if (_VerboseLogging)
+                {
+                    Log(THERMOMETER_LOG_LABEL + "TaskCancelledException while Log's being executed" + '\n');
+                }
             }
         }
     }
