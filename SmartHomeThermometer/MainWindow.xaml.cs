@@ -118,9 +118,12 @@ namespace SmartHomeThermometer
                     _UpdateInterval = int.Parse(UpdateIntervalTextBlock.Text);
                     _Thermometer.UpdateInterval = _UpdateInterval;
 
-                    Log(UPDATE_INTERVAL_LOG_LABEL + string.Format("Set to {0}\n", _UpdateInterval));
+                    Log(UPDATE_INTERVAL_LOG_LABEL + string.Format("Set to {0}" + '\n', _UpdateInterval));
 
-                    if (_Socket != null && _Socket.Connected) SendUpdateInterval(_Thermometer.UpdateInterval);
+                    if (_Socket != null && _Socket.Connected)
+                    {
+                        SendUpdateInterval(_Thermometer.UpdateInterval);
+                    }
                 }
                 catch (Exception exc)
                 {
@@ -154,13 +157,16 @@ namespace SmartHomeThermometer
             {
                 try
                 {
-                    while (_Socket != null && _Socket.Connected)
+                    while (_Socket != null)
                     {
-                        byte[] bytes = new byte[BUFFER_SIZE];
-                        Receive(ref _Socket, ref bytes);
+                        if (_Socket.Connected)
+                        {
+                            byte[] bytes = new byte[BUFFER_SIZE];
+                            Receive(ref _Socket, ref bytes);
 
-                        ProcessData(CacheData(Encoding.Unicode.GetString(bytes), ref _Cache));
-                        ProcessData(ref _Cache);
+                            ProcessData(CacheData(Encoding.Unicode.GetString(bytes), ref _Cache));
+                            ProcessData(ref _Cache);
+                        }
                     }
                 }
                 catch (ThreadAbortException)
@@ -175,25 +181,25 @@ namespace SmartHomeThermometer
         {
             return new Thread(new ThreadStart(delegate ()
             {
-                Log((CONNECTION_LOG_LABEL +
-                    string.Format("Connecting to {0}:{1}\n", _IPAddress.ToString(), _Port)));
                 Dispatcher.Invoke(delegate ()
                 {
                     ConnectionStateLabel.Content = CONNECTION_WAIT;
                     SwitchButtonsOnConnectionStatusChanged(true);
                 });
+                Log((CONNECTION_LOG_LABEL +
+                    string.Format("Connecting to {0}:{1}\n", _IPAddress.ToString(), _Port)));
 
                 try
                 {
                     _Socket = new TcpClient();
                     _Socket.Connect(_IPAddress, _Port);
 
-                    Log(CONNECTION_LOG_LABEL +
-                        string.Format("Connected to {0}:{1}\n", _IPAddress.ToString(), _Port));
                     Dispatcher.Invoke(delegate ()
                     {
                         ConnectionStateLabel.Content = CONNECTION_UP;
                     });
+                    Log(CONNECTION_LOG_LABEL +
+                        string.Format("Connected to {0}:{1}\n", _IPAddress.ToString(), _Port));
 
                     SendInfo();
                     SendUpdateInterval(_UpdateInterval);
@@ -203,21 +209,21 @@ namespace SmartHomeThermometer
                 }
                 catch (SocketException exc)
                 {
-                    Log(CONNECTION_LOG_LABEL + exc.Message + '\n');
                     Dispatcher.Invoke(delegate ()
                     {
                         ConnectionStateLabel.Content = CONNECTION_ERR;
                         SwitchButtonsOnConnectionStatusChanged(false);
                     });
+                    Log(CONNECTION_LOG_LABEL + exc.Message + '\n');
                 }
                 catch (ObjectDisposedException exc)
                 {
-                    Log(CONNECTION_LOG_LABEL + exc.Message + '\n');
                     Dispatcher.Invoke(delegate ()
                     {
                         ConnectionStateLabel.Content = CONNECTION_DOWN;
                         SwitchButtonsOnConnectionStatusChanged(false);
                     });
+                    Log(CONNECTION_LOG_LABEL + exc.Message + '\n');
                 }
             }));
         }
@@ -339,7 +345,6 @@ namespace SmartHomeThermometer
         private void SendInfo()
         {
             byte[] bytes = Encoding.Unicode.GetBytes(NETWORK_DEVICE_ARG + "Thermometer" + DELIMITER);
-
             Send(bytes);
 
             Log(NETWORK_LOG_LABEL + "Sent info" + '\n');
@@ -348,7 +353,6 @@ namespace SmartHomeThermometer
         private void SendUpdateInterval(double updateInterval)
         {
             byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_UPDATE_INTERVAL_ARG + "{0}" + DELIMITER, updateInterval));
-
             Send(bytes);
 
             Log(NETWORK_LOG_LABEL + "Sent update interval" + '\n');
@@ -357,7 +361,6 @@ namespace SmartHomeThermometer
         private void SendTemperature(double temperature)
         {
             byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_TEMPERATURE_ARG + "{0}" + DELIMITER, temperature));
-
             Send(bytes);
 
             Log(NETWORK_LOG_LABEL +
@@ -367,7 +370,6 @@ namespace SmartHomeThermometer
         private void SendMethodToInvoke(string method)
         {
             byte[] bytes = Encoding.Unicode.GetBytes(NETWORK_METHOD_TO_INVOKE_ARG + method + DELIMITER);
-
             Send(bytes);
 
             Log(NETWORK_LOG_LABEL + "Sent method to close connection" + '\n');
@@ -416,9 +418,9 @@ namespace SmartHomeThermometer
                     }
                     catch (Exception exc)
                     {
-                        Log(UPDATE_INTERVAL_LOG_LABEL + exc.Message + '\n');
-
                         SendUpdateInterval(_Thermometer.UpdateInterval);
+
+                        Log(UPDATE_INTERVAL_LOG_LABEL + exc.Message + '\n');
                     }
                 }
                 catch (FormatException)
