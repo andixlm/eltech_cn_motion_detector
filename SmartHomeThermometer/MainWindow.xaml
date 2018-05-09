@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SmartHomeThermometer"
         mc:Ignorable="d"
-        Title="Thermometer" MinHeight="325" Height="325" MaxHeight="325" MinWidth="400" Width="400">
+        Title="Thermometer" MinHeight="350" Height="350" MaxHeight="350" MinWidth="400" Width="400">
 
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch">
         <Grid>
@@ -52,6 +52,18 @@
         <GroupBox Header="Log" Margin="4">
             <Grid>
                 <StackPanel Margin="4" Orientation="Vertical">
+
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Name="VerobseLoggingCheckBox" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        <Label Content="Verbose Logging" VerticalAlignment="Center" HorizontalAlignment="Center" />
+
+                        <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+
+                        <CheckBox Name="ScrollToEndCheckBox" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4" />
+                        <Label Content="Scroll To End" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </StackPanel>
+
+                    <Separator />
 
                     <TextBox Name="LogTextBlock" Height="96" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
 
