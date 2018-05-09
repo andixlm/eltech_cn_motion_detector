@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SmartHomeThermometer.Properties
+namespace SmartHomeLightSwitcher.Properties
 {
 
 

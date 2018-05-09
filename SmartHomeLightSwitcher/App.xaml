@@ -1,7 +1,7 @@
-﻿<Application x:Class="SmartHomeThermometer.App"
+﻿<Application x:Class="SmartHomeLightSwitcher.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:SmartHomeThermometer"
+             xmlns:local="clr-namespace:SmartHomeLightSwitcher"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

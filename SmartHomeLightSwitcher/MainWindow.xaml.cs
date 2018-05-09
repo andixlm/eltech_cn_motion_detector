@@ -16,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SmartHomeThermometer
+namespace SmartHomeLightSwitcher
 {
     public partial class MainWindow : Window
     {
@@ -30,25 +30,22 @@ namespace SmartHomeThermometer
         private static readonly int MINIMAL_PORT_VALUE = 1024;
         private static readonly int MAXIMAL_PORT_VALUE = 49151;
 
-        private static readonly string THERMOMETER_LOG_LABEL = "Thermometer: ";
-
         private static readonly string CONNECTION_LOG_LABEL = "Connection: ";
         private static readonly string CONNECTION_UP = "up";
         private static readonly string CONNECTION_WAIT = "wait";
         private static readonly string CONNECTION_DOWN = "down";
         private static readonly string CONNECTION_ERR = "err";
 
-        private static readonly string UPDATE_INTERVAL_LOG_LABEL = "Update interval: ";
+        private static readonly string LIGHT_SWITCHER_LOG_LABEL = "Light Switcher: ";
 
         private static readonly string NETWORK_LOG_LABEL = "Network: ";
 
         private static readonly string NETWORK_DEVICE_ARG = "Device: ";
-        private static readonly string NETWORK_TEMPERATURE_ARG = "Temperatute: ";
-        private static readonly string NETWORK_UPDATE_INTERVAL_ARG = "Update interval: ";
+        private static readonly string NETWORK_LIGHTS_ARG = "Lights: ";
         private static readonly string NETWORK_METHOD_TO_INVOKE_ARG = "Method: ";
         private static readonly string NETWORK_STATUS_ARG = "Status: ";
 
-        private static readonly string NETWORK_METHOD_TO_UPDATE_TEMP = "UPDATE_TEMP";
+        private static readonly string NETWORK_LIGHT_SWITCHER_METHOD_TO_SWITCH = "SWITCH";
         private static readonly string NETWORK_METHOD_TO_DISCONNECT = "DISCONNECT";
         private static readonly string NETWORK_METHOD_TO_REQUEST_STATUS = "REQUEST_STATUS";
 
@@ -56,10 +53,6 @@ namespace SmartHomeThermometer
 
         private bool _VerboseLogging;
         private bool _ShouldScrollToEnd;
-
-        private Thermometer _Thermometer;
-
-        private int _UpdateInterval;
 
         private TcpClient _Socket;
 
@@ -75,6 +68,8 @@ namespace SmartHomeThermometer
         private IPAddress _IPAddress;
         private int _Port;
 
+        private bool _Lights;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -85,11 +80,6 @@ namespace SmartHomeThermometer
 
         private void Init()
         {
-            _Thermometer = new Thermometer();
-
-            _UpdateInterval = Thermometer.DEFAULT_UPDATE_INTERVAL;
-            UpdateIntervalTextBlock.Text = _UpdateInterval.ToString();
-
             _ReceiveMutex = new Mutex();
             _SendMutex = new Mutex();
 
@@ -100,6 +90,9 @@ namespace SmartHomeThermometer
 
         private void Configure()
         {
+            _Lights = false;
+            UpdateLightsStatus();
+
             _VerboseLogging = false;
             VerobseLoggingCheckBox.IsChecked = _VerboseLogging;
             VerobseLoggingCheckBox.Checked += (sender, e) =>
@@ -125,7 +118,6 @@ namespace SmartHomeThermometer
             /// App
             Closed += (sender, e) =>
             {
-                _Thermometer.Dispose();
                 Disconnect();
                 _Socket = null;
             };
@@ -146,45 +138,14 @@ namespace SmartHomeThermometer
                 _Socket = new TcpClient();
             };
 
-            UpdateIntervalSetButton.Click += (sender, e) =>
+            SwitchButton.Click += (sender, e) =>
             {
-                try
-                {
-                    _UpdateInterval = int.Parse(UpdateIntervalTextBlock.Text);
-                    _Thermometer.UpdateInterval = _UpdateInterval;
-
-                    Log(UPDATE_INTERVAL_LOG_LABEL + string.Format("Set to {0}" + '\n', _UpdateInterval));
-
-                    if (_Socket != null && _Socket.Connected)
-                    {
-                        SendUpdateInterval(_Thermometer.UpdateInterval);
-                    }
-                }
-                catch (Exception exc)
-                {
-                    if (_VerboseLogging)
-                    {
-                        Log(UPDATE_INTERVAL_LOG_LABEL + exc.Message + '\n');
-                    }
-                }
-            };
-
-            TemperatureUpdateButton.Click += (sender, e) =>
-            {
-                _Thermometer.UpdateTemperature();
-            };
-
-            /// Objects
-            _Thermometer.OnTemperatureUpdate = (temperature) =>
-            {
-                Dispatcher.Invoke(delegate ()
-                {
-                    TemperatureValueLabel.Content = temperature.ToString("F2");
-                });
+                _Lights = !_Lights;
+                UpdateLightsStatus();
 
                 if (_Socket != null && _Socket.Connected)
                 {
-                    SendTemperature(temperature);
+                    SendLightsStatus();
                 }
             };
         }
@@ -220,7 +181,7 @@ namespace SmartHomeThermometer
                     {
                         if (_VerboseLogging)
                         {
-                            Log(THERMOMETER_LOG_LABEL + "Mutex's been tried to be released not by the owner thread." + '\n');
+                            Log(LIGHT_SWITCHER_LOG_LABEL + "Mutex's been tried to be released not by the owner thread." + '\n');
                         }
                     }
                 }
@@ -252,7 +213,7 @@ namespace SmartHomeThermometer
                         string.Format("Connected to {0}:{1}\n", _IPAddress.ToString(), _Port));
 
                     SendInfo();
-                    SendUpdateInterval(_UpdateInterval);
+                    SendLightsStatus();
 
                     _ListenerThread = ConfigureListenerThread();
                     _ListenerThread.Start();
@@ -418,27 +379,21 @@ namespace SmartHomeThermometer
 
         private void SendInfo()
         {
-            byte[] bytes = Encoding.Unicode.GetBytes(NETWORK_DEVICE_ARG + "Thermometer" + DELIMITER);
+            byte[] bytes = Encoding.Unicode.GetBytes(NETWORK_DEVICE_ARG + "LightSwitcher" + DELIMITER);
             Send(bytes);
 
             Log(NETWORK_LOG_LABEL + "Sent info" + '\n');
         }
 
-        private void SendUpdateInterval(double updateInterval)
+        private void SendLightsStatus()
         {
-            byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_UPDATE_INTERVAL_ARG + "{0}" + DELIMITER, updateInterval));
+            byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_LIGHTS_ARG + "{0}" + DELIMITER, _Lights));
             Send(bytes);
 
-            Log(NETWORK_LOG_LABEL + "Sent update interval" + '\n');
-        }
-
-        private void SendTemperature(double temperature)
-        {
-            byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_TEMPERATURE_ARG + "{0}" + DELIMITER, temperature));
-            Send(bytes);
-
-            Log(NETWORK_LOG_LABEL +
-                string.Format("Sent temperature: {0}", temperature.ToString("F2")) + '\n');
+            if (_VerboseLogging)
+            {
+                Log(NETWORK_LOG_LABEL + string.Format("Sent lights status: {0}", _Lights) + '\n');
+            }
         }
 
         private void SendStatus()
@@ -457,7 +412,10 @@ namespace SmartHomeThermometer
             byte[] bytes = Encoding.Unicode.GetBytes(NETWORK_METHOD_TO_INVOKE_ARG + method + DELIMITER);
             Send(bytes);
 
-            Log(NETWORK_LOG_LABEL + "Sent method to close connection" + '\n');
+            if (_VerboseLogging)
+            {
+                Log(NETWORK_LOG_LABEL + "Sent method: " + method + '\n');
+            }
         }
 
         string CacheData(string data, ref List<string> cache)
@@ -483,55 +441,28 @@ namespace SmartHomeThermometer
             }
 
             int idx;
-            if ((idx = data.IndexOf(NETWORK_UPDATE_INTERVAL_ARG)) >= 0)
-            {
-                try
-                {
-                    int startIdx = idx + NETWORK_UPDATE_INTERVAL_ARG.Length, endIdx = data.IndexOf(DELIMITER);
-                    int updateInterval = int.Parse(data.Substring(startIdx, endIdx - startIdx));
-
-                    Log(NETWORK_LOG_LABEL + string.Format("Received update interval: {0}", updateInterval) + '\n');
-
-                    try
-                    {
-                        _Thermometer.UpdateInterval = updateInterval;
-
-                        Dispatcher.Invoke(delegate ()
-                        {
-                            UpdateIntervalTextBlock.Text = updateInterval.ToString();
-                        });
-                    }
-                    catch (Exception exc)
-                    {
-                        SendUpdateInterval(_Thermometer.UpdateInterval);
-
-                        Log(UPDATE_INTERVAL_LOG_LABEL + exc.Message + '\n');
-                    }
-                }
-                catch (FormatException)
-                {
-                    Log(NETWORK_LOG_LABEL + "Received incorrect update interval" + '\n');
-                }
-            }
-            else if ((idx = data.IndexOf(NETWORK_METHOD_TO_INVOKE_ARG)) >= 0)
+            if ((idx = data.IndexOf(NETWORK_METHOD_TO_INVOKE_ARG)) >= 0)
             {
                 int startIdx = idx + NETWORK_METHOD_TO_INVOKE_ARG.Length, endIdx = data.IndexOf(DELIMITER);
                 string method = data.Substring(startIdx, endIdx - startIdx);
 
-                if (!string.IsNullOrEmpty(method) && method.Equals(NETWORK_METHOD_TO_UPDATE_TEMP))
+                if (!string.IsNullOrEmpty(method) && method.Equals(NETWORK_LIGHT_SWITCHER_METHOD_TO_SWITCH))
                 {
-                    _Thermometer.UpdateTemperature();
+                    Log(NETWORK_LOG_LABEL + "Lights switch was requested." + '\n');
 
-                    Log(NETWORK_LOG_LABEL + "Temperature update was requested." + '\n');
+                    _Lights = !_Lights;
+                    UpdateLightsStatus();
+
+                    SendLightsStatus();
                 }
                 else if (!string.IsNullOrEmpty(method) && method.Equals(NETWORK_METHOD_TO_REQUEST_STATUS))
                 {
-                    SendStatus();
-
                     if (_VerboseLogging)
                     {
                         Log(NETWORK_LOG_LABEL + "Status was requested." + '\n');
                     }
+
+                    SendStatus();
                 }
             }
             else
@@ -552,6 +483,14 @@ namespace SmartHomeThermometer
             dataSet.Clear();
 
             _DataMutex.ReleaseMutex();
+        }
+
+        private void UpdateLightsStatus()
+        {
+            Dispatcher.Invoke(delegate ()
+            {
+                LightsValueLabel.Content = _Lights ? "on" : "off";
+            });
         }
 
         private void Log(string info)
