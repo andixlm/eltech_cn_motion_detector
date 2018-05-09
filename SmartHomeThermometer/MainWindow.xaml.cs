@@ -101,7 +101,26 @@ namespace SmartHomeThermometer
         private void Configure()
         {
             _VerboseLogging = false;
+            VerobseLoggingCheckBox.IsChecked = _VerboseLogging;
+            VerobseLoggingCheckBox.Checked += (sender, e) =>
+            {
+                _VerboseLogging = true;
+            };
+            VerobseLoggingCheckBox.Unchecked += (sender, e) =>
+            {
+                _VerboseLogging = false;
+            };
+
             _ShouldScrollToEnd = true;
+            ScrollToEndCheckBox.IsChecked = _ShouldScrollToEnd;
+            ScrollToEndCheckBox.Checked += (sender, e) =>
+            {
+                _ShouldScrollToEnd = true;
+            };
+            ScrollToEndCheckBox.Unchecked += (sender, e) =>
+            {
+                _ShouldScrollToEnd = false;
+            };
 
             /// App
             Closed += (sender, e) =>
