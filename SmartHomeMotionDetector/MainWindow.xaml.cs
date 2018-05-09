@@ -153,13 +153,13 @@ namespace SmartHomeMotionDetector
                 {
                     while (true)
                     {
-                        Thread.Sleep(sRandom.Next(1000, 10000));
-
                         UpdateMotionTime();
                         if (_Socket != null && _Socket.Connected)
                         {
                             SendMotionTime();
                         }
+
+                        Thread.Sleep(sRandom.Next(1000, 10000));
                     }
                 }
                 catch (ThreadAbortException)
