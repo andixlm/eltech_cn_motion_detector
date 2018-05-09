@@ -401,10 +401,17 @@ namespace SmartHomeMotionDetector
             _MotionDetectorTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             _MotionDetectorTime = _MotionDetectorTime.AddSeconds(_UnixTime);
 
-            Dispatcher.Invoke(delegate ()
+            try
             {
-                MotionTimeValueLabel.Content = _MotionDetectorTime.ToString();
-            });
+                Dispatcher.Invoke(delegate ()
+                {
+                    MotionTimeValueLabel.Content = _MotionDetectorTime.ToString();
+                });
+            }
+            catch (TaskCanceledException)
+            {
+                _ShouldWork = false;
+            }
         }
 
         private void SendMotionTime()
