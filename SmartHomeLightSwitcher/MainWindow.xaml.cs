@@ -291,6 +291,8 @@ namespace SmartHomeLightSwitcher
         {
             Dispatcher.Invoke(delegate ()
             {
+                PortTextBox.IsEnabled = !isConnected;
+
                 ConnectButton.IsEnabled = !isConnected;
                 DisconnectButton.IsEnabled = isConnected;
             });
