@@ -16,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SmartHomeLightSwitcher
+namespace SmartHomeMotionDetector
 {
     public partial class MainWindow : Window
     {
@@ -36,20 +36,23 @@ namespace SmartHomeLightSwitcher
         private static readonly string CONNECTION_DOWN = "down";
         private static readonly string CONNECTION_ERR = "err";
 
-        private static readonly string LIGHT_SWITCHER_LOG_LABEL = "Light Switcher: ";
+        private static readonly string MOTION_DETECTOR_LOG_LABEL = "Motion Detector: ";
 
         private static readonly string NETWORK_LOG_LABEL = "Network: ";
 
         private static readonly string NETWORK_DEVICE_ARG = "Device: ";
-        private static readonly string NETWORK_LIGHTS_ARG = "Lights: ";
+        private static readonly string NETWORK_TIME_ARG = "Time: ";
         private static readonly string NETWORK_METHOD_TO_INVOKE_ARG = "Method: ";
         private static readonly string NETWORK_STATUS_ARG = "Status: ";
 
-        private static readonly string NETWORK_LIGHT_SWITCHER_METHOD_TO_SWITCH = "SWITCH";
         private static readonly string NETWORK_METHOD_TO_DISCONNECT = "DISCONNECT";
         private static readonly string NETWORK_METHOD_TO_REQUEST_STATUS = "REQUEST_STATUS";
 
         private static readonly int DEVICE_STATUS_UP = 42;
+
+        private static readonly Random sRandom = new Random();
+
+        private static readonly DateTime sEpochTime = new DateTime(1970, 1, 1);
 
         private bool _VerboseLogging;
         private bool _ShouldScrollToEnd;
@@ -57,6 +60,7 @@ namespace SmartHomeLightSwitcher
         private TcpClient _Socket;
 
         private Thread _ListenerThread;
+        private Thread _WorkerThread;
 
         private Mutex _DataMutex;
 
@@ -65,7 +69,8 @@ namespace SmartHomeLightSwitcher
         private IPAddress _IPAddress;
         private int _Port;
 
-        private bool _Lights;
+        private long _UnixTime;
+        private DateTime _MotionDetectorTime;
 
         public MainWindow()
         {
@@ -78,14 +83,14 @@ namespace SmartHomeLightSwitcher
         private void Init()
         {
             _DataMutex = new Mutex();
-
             _Cache = new List<string>();
+
+            _MotionDetectorTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         }
 
         private void Configure()
         {
-            _Lights = false;
-            UpdateLightsStatus();
+            
 
             _VerboseLogging = false;
             VerobseLoggingCheckBox.IsChecked = _VerboseLogging;
@@ -113,6 +118,7 @@ namespace SmartHomeLightSwitcher
             Closed += (sender, e) =>
             {
                 Disconnect();
+                _WorkerThread.Abort();
                 _Socket = null;
             };
 
@@ -132,16 +138,39 @@ namespace SmartHomeLightSwitcher
                 _Socket = new TcpClient();
             };
 
-            SwitchButton.Click += (sender, e) =>
+            FakeButton.Click += (sender, e) =>
             {
-                _Lights = !_Lights;
-                UpdateLightsStatus();
-
+                UpdateMotionTime();
                 if (_Socket != null && _Socket.Connected)
                 {
-                    SendLightsStatus();
+                    SendMotionTime();
                 }
             };
+
+            _WorkerThread = new Thread(new ThreadStart(delegate ()
+            {
+                try
+                {
+                    while (true)
+                    {
+                        Thread.Sleep(sRandom.Next(1000, 10000));
+
+                        UpdateMotionTime();
+                        if (_Socket != null && _Socket.Connected)
+                        {
+                            SendMotionTime();
+                        }
+                    }
+                }
+                catch (ThreadAbortException)
+                {
+                    if (_VerboseLogging)
+                    {
+                        Log(NETWORK_LOG_LABEL + "Worker thread was terminated" + '\n');
+                    }
+                }
+            }));
+            _WorkerThread.Start();
         }
 
         private Thread ConfigureListenerThread()
@@ -195,7 +224,8 @@ namespace SmartHomeLightSwitcher
                         string.Format("Connected to {0}:{1}\n", _IPAddress.ToString(), _Port));
 
                     SendInfo();
-                    SendLightsStatus();
+                    UpdateMotionTime();
+                    SendMotionTime();
 
                     _ListenerThread = ConfigureListenerThread();
                     _ListenerThread.Start();
@@ -355,20 +385,33 @@ namespace SmartHomeLightSwitcher
 
         private void SendInfo()
         {
-            byte[] bytes = Encoding.Unicode.GetBytes(NETWORK_DEVICE_ARG + "LightSwitcher" + DELIMITER);
+            byte[] bytes = Encoding.Unicode.GetBytes(NETWORK_DEVICE_ARG + "MotionDetector" + DELIMITER);
             Send(bytes);
 
             Log(NETWORK_LOG_LABEL + "Sent info" + '\n');
         }
 
-        private void SendLightsStatus()
+        private void UpdateMotionTime()
         {
-            byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_LIGHTS_ARG + "{0}" + DELIMITER, _Lights));
+            _UnixTime = (long) DateTime.UtcNow.Subtract(sEpochTime).TotalSeconds;
+
+            _MotionDetectorTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            _MotionDetectorTime = _MotionDetectorTime.AddSeconds(_UnixTime);
+
+            Dispatcher.Invoke(delegate ()
+            {
+                MotionTimeValueLabel.Content = _MotionDetectorTime.ToString();
+            });
+        }
+
+        private void SendMotionTime()
+        {
+            byte[] bytes = Encoding.Unicode.GetBytes(string.Format(NETWORK_TIME_ARG + "{0}" + DELIMITER, _UnixTime));
             Send(bytes);
 
             if (_VerboseLogging)
             {
-                Log(NETWORK_LOG_LABEL + string.Format("Sent lights status: {0}", _Lights) + '\n');
+                Log(NETWORK_LOG_LABEL + string.Format("Sent time: {0}", _UnixTime) + '\n');
             }
         }
 
@@ -422,16 +465,7 @@ namespace SmartHomeLightSwitcher
                 int startIdx = idx + NETWORK_METHOD_TO_INVOKE_ARG.Length, endIdx = data.IndexOf(DELIMITER);
                 string method = data.Substring(startIdx, endIdx - startIdx);
 
-                if (!string.IsNullOrEmpty(method) && method.Equals(NETWORK_LIGHT_SWITCHER_METHOD_TO_SWITCH))
-                {
-                    Log(NETWORK_LOG_LABEL + "Lights switch was requested." + '\n');
-
-                    _Lights = !_Lights;
-                    UpdateLightsStatus();
-
-                    SendLightsStatus();
-                }
-                else if (!string.IsNullOrEmpty(method) && method.Equals(NETWORK_METHOD_TO_REQUEST_STATUS))
+                if (!string.IsNullOrEmpty(method) && method.Equals(NETWORK_METHOD_TO_REQUEST_STATUS))
                 {
                     if (_VerboseLogging)
                     {
@@ -459,14 +493,6 @@ namespace SmartHomeLightSwitcher
             dataSet.Clear();
 
             _DataMutex.ReleaseMutex();
-        }
-
-        private void UpdateLightsStatus()
-        {
-            Dispatcher.Invoke(delegate ()
-            {
-                LightsValueLabel.Content = _Lights ? "on" : "off";
-            });
         }
 
         private void Log(string info)

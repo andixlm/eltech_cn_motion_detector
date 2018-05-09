@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SmartHomeLightSwitcher.Properties
+namespace SmartHomeMotionDetector.Properties
 {
 
 

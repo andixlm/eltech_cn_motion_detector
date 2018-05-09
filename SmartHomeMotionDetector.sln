@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHomeLightSwitcher", "SmartHomeLightSwitcher\SmartHomeLightSwitcher.csproj", "{C53BC0DD-0FB5-4F19-8C7E-137D8C0A3EE1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHomeMotionDetector", "SmartHomeMotionDetector\SmartHomeMotionDetector.csproj", "{48DB5383-2A29-45A3-B83C-E1E115BD78E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C53BC0DD-0FB5-4F19-8C7E-137D8C0A3EE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C53BC0DD-0FB5-4F19-8C7E-137D8C0A3EE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C53BC0DD-0FB5-4F19-8C7E-137D8C0A3EE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C53BC0DD-0FB5-4F19-8C7E-137D8C0A3EE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48DB5383-2A29-45A3-B83C-E1E115BD78E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48DB5383-2A29-45A3-B83C-E1E115BD78E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48DB5383-2A29-45A3-B83C-E1E115BD78E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48DB5383-2A29-45A3-B83C-E1E115BD78E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {BB6AD042-EB01-40F8-82EE-4AAE99FBAA55}
+		SolutionGuid = {795B2733-C2B1-4E7D-A547-F50DD83A4135}
 	EndGlobalSection
 EndGlobal

@@ -1,7 +1,7 @@
-﻿<Application x:Class="SmartHomeLightSwitcher.App"
+﻿<Application x:Class="SmartHomeMotionDetector.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:SmartHomeLightSwitcher"
+             xmlns:local="clr-namespace:SmartHomeMotionDetector"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          
