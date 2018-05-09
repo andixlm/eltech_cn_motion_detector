@@ -69,6 +69,8 @@ namespace SmartHomeMotionDetector
         private IPAddress _IPAddress;
         private int _Port;
 
+        private bool _ShouldWork;
+
         private long _UnixTime;
         private DateTime _MotionDetectorTime;
 
@@ -90,7 +92,7 @@ namespace SmartHomeMotionDetector
 
         private void Configure()
         {
-            
+            _ShouldWork = true;
 
             _VerboseLogging = false;
             VerobseLoggingCheckBox.IsChecked = _VerboseLogging;
@@ -151,7 +153,7 @@ namespace SmartHomeMotionDetector
             {
                 try
                 {
-                    while (true)
+                    while (_ShouldWork)
                     {
                         UpdateMotionTime();
                         if (_Socket != null && _Socket.Connected)
@@ -164,6 +166,7 @@ namespace SmartHomeMotionDetector
                 }
                 catch (ThreadAbortException)
                 {
+                    _ShouldWork = false;
                     if (_VerboseLogging)
                     {
                         Log(NETWORK_LOG_LABEL + "Worker thread was terminated" + '\n');
